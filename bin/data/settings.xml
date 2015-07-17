@@ -1,0 +1,13 @@
+<panel>
+	<length>400</length>
+	<missThr>30</missThr>
+	<3d_scale_x>30</3d_scale_x>
+	<3d_scale_y>30</3d_scale_y>
+	<3d_scale_z>1</3d_scale_z>
+	<size_scale>2</size_scale>
+	<size_offset>5</size_offset>
+	<Timeline_Draw_Method>0</Timeline_Draw_Method>
+	<color1>109, 184, 255, 255</color1>
+	<color2>215, 87, 109, 149</color2>
+	<color3>255, 255, 255, 255</color3>
+</panel>
