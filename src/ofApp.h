@@ -40,6 +40,13 @@ public:
     ofImage slide[4];
     int currentSlide;
     
+    ofImage haikei[5];//(0:無し,1:)
+    int currentHaikei;
+    int preHaikei;//フェード前の背景インデックス
+    int countHaikei;//フェード用のカウンタ
+    int countHaikeiMax=30;//フェードにかける時間
+    
+    
     ofImage img;
     bool bHideImage;
     bool bBlack;

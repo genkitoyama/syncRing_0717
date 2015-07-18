@@ -8,9 +8,6 @@
 
 #include "ObjHuman.h"
 
-
-
-
 ObjSimple::ObjSimple(){
 }
 

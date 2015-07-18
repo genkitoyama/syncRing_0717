@@ -17,6 +17,14 @@ void ofApp::setup(){
         slide[i].loadImage(c1);
     }
     currentSlide = 0;
+
+    for(int i=0;i<5;i++){
+        char c2[32];
+        sprintf(c2, "haikei/h_%04d.png", i+1);
+        haikei[i].loadImage(c2);
+    }
+    currentHaikei = 0;
+    
     
     bHideImage = false;
     bBlack = false;
@@ -303,6 +311,17 @@ void ofApp::update(){
         objbuf.setup(100, 100, ofRandom(-500,500), cameraMoving.y+800, ofRandom(-100,400));
         objLibs.push_back(objbuf);
         texflag = 0;
+    }
+    
+    //背景のクロスフェード
+    if(countHaikei){
+        countHaikei++;
+        if (countHaikei==countHaikeiMax) {
+            countHaikei=0;
+            preHaikei=currentHaikei;
+        }
+    }else{
+        preHaikei=currentHaikei;
     }
     
     //---------------------------------------------
@@ -603,6 +622,24 @@ void ofApp::draw(){
         img.draw(0,0,ofGetWidth(),ofGetHeight());
         return;
     }
+
+    //背景表示
+    ofSetColor(255,255,255,255);
+    if(currentHaikei==preHaikei && currentHaikei>0){
+        ofEnableAlphaBlending();
+        haikei[currentHaikei-1].draw(240,0);
+        ofDisableAlphaBlending();
+    }else{
+        if(currentHaikei < 6 && currentHaikei>0){
+            ofEnableAlphaBlending();
+            haikei[preHaikei-1].draw(240,0);
+            ofSetColor(255,255,255,(int)(255.0*countHaikei/countHaikeiMax));
+            haikei[currentHaikei-1].draw(240,0);
+            ofDisableAlphaBlending();
+        }
+    }
+    
+    
     
     //ここから3D CG
     draw3d();
@@ -931,6 +968,22 @@ void ofApp::keyPressed(int key){
     }
     else if(key == '['){
         commentsw= !commentsw;
+    }
+    else if(key == '-'){
+        //変わりきる前にコマンド押すと背景がパカッて変わるので背景が全部変わってから次の背景チェンジを行うこと
+        if(currentHaikei<5){
+            currentHaikei++;
+            countHaikei=1;
+        }
+    }
+    else if(key == '^'){
+        if(currentHaikei>0){
+            currentHaikei--;
+            countHaikei=1;
+        }
+    }
+    else if(key == '0'){
+        currentHaikei=0;
     }
     
 }
