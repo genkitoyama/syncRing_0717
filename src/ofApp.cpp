@@ -90,6 +90,15 @@ void ofApp::setup(){
     objTorii.setup(1200, 1200, 0, 800, 300);
     
     
+    //ここからケチャ
+    for(int i =0; i<300 ; i++){
+        //Ketyas.push_back(KetyaBall(ofRandom(-100,100), ofRandom(-100,100)));
+        Ketyas_billboard.push_back(KetyaBillboard(ofRandom(-500,500), ofRandom(-500,500)));
+    }
+    for (int i=0;i<Ketyas_billboard.size();i++){
+        Ketyas_billboard[i].setup();
+    }
+    
     texCloud.loadImage("textures/cloud1.png");
     for (int i = 0;i<100;i++){
         ObjSimple objbuf;
@@ -296,6 +305,14 @@ void ofApp::update(){
     }
     objRoad.update();
     
+    //ケチャ
+    /*for (vector<KetyaBall>::iterator it=Ketyas.begin(); it!=Ketyas.end(); ++it) {
+        it->update();
+    }*/
+    
+    for (int i=0;i<Ketyas_billboard.size();i++){
+        Ketyas_billboard[i].update();
+    }
     timeline.update();
     timer = ofGetElapsedTimeMillis()-startTime;
     
@@ -425,7 +442,6 @@ void ofApp::draw3d(){
     ofEnableBlendMode(OF_BLENDMODE_ADD);//加算描画 this makes everything look glowy
     ofEnablePointSprites();
     
-    
     //道路表示
     //shader2.begin();
     camera2.begin();
@@ -493,43 +509,7 @@ void ofApp::draw3d(){
     glDepthMask(GL_FALSE);
     
     
-    // this makes everything look glowy :)
-    ofEnablePointSprites();
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-    ofEnableAlphaBlending();
-    
-    shader.begin();
-    camera.begin();
-    
-    glPointSize(10);
-    
-    //観客ノード
-    texture.bind();
-    //texture2.bind();
-    //ofSetColor(255);
-    ofSetColor(0, 100, 255);
-    int total = (int)points.size();
-    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0, (int)points.size());
-    
-    ofSetColor(255, 100, 90);
-    total = (int)points2.size();
-    vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0,(int)points2.size());
-    texture.unbind();
-    //texture2.unbind();
-    
-    //ライブハウスグリッド描画
-    objFrame.draw();
-    
-    camera.end();
-    shader.end();
-    
-    ofDisablePointSprites();
-    ofDisableBlendMode();
-    ofDisableAlphaBlending();
+
     
     //基準座標
     camera2.begin();
@@ -575,7 +555,6 @@ void ofApp::draw3d(){
         }
     }
     
-    
     for(int i =0 ;i< objLibs.size();i++){
         if(objLibs[i].visible(cameraMoving.y)){
             objLibs[i].draw(texLibs[objLibs[i].texidi*TEXLIBNUM+objLibs[i].texidj]);
@@ -601,8 +580,66 @@ void ofApp::draw3d(){
             }
         }
     }
+    
+    //ここからケチャ
+    ofEnableAlphaBlending();
+    
+    /*KetyaParticle::img.bind();
+    for (vector<KetyaBall>::iterator it=Ketyas.begin(); it!=Ketyas.end(); ++it) {
+        it->draw();
+    }
+    KetyaParticle::img.unbind();*/
+    
+    
+    texture.bind();
+
+    for (int i=0;i<Ketyas_billboard.size();i++){
+        Ketyas_billboard[i].draw();
+    }
+    texture.unbind();
+
+    
+    // this makes everything look glowy :)
+    ofEnablePointSprites();
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofEnableAlphaBlending();
+    
+    shader.begin();
+    camera.begin();
+    
+    glPointSize(10);
+    
+    //観客ノード
+    texture.bind();
+    //texture2.bind();
+    //ofSetColor(255);
+    ofSetColor(0, 100, 255);
+    int total = (int)points.size();
+    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+    vbo.draw(GL_POINTS, 0, (int)points.size());
+    
+    ofSetColor(255, 100, 90);
+    total = (int)points2.size();
+    vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
+    vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
+    vbo.draw(GL_POINTS, 0,(int)points2.size());
+    texture.unbind();
+    //texture2.unbind();
+    
+    //ライブハウスグリッド描画
+    objFrame.draw();
+    
     camera.end();
+    shader.end();
+    
+    ofDisablePointSprites();
+    ofDisableBlendMode();
     ofDisableAlphaBlending();
+    
+    
+    ofDisableAlphaBlending();
+    camera.end();
     
     
     glDepthMask(GL_TRUE);

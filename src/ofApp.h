@@ -139,6 +139,11 @@ public:
     ofImage texTorii;
     ObjSimple objTorii;
     
+    //ケチャ
+    //vector<KetyaBall> Ketyas;
+    
+    vector<KetyaBillboard> Ketyas_billboard;
+    
     // 雲たち
     ofImage texCloud;
     vector<ObjSimple> objClouds;
@@ -220,4 +225,5 @@ public:
     ofImage texture_;
     ofVboMesh billboards;
     ofVec3f billboardVels[NUM_BILLBOARDS];
+
 };

@@ -8,6 +8,168 @@
 
 #include "ObjHuman.h"
 
+/*ofShader KetyaBillboard::billboardShader_k;
+ofImage KetyaBillboard::texture_k;
+ofVbo KetyaBillboard::billboards_k;
+vector<ofVec3f> KetyaBillboard::billboardVels_kp;//position
+vector<ofVec3f> KetyaBillboard::billboardVels_kv;//vel
+vector<ofVec3f> KetyaBillboard::billboardVels_kc;//center of
+vector<int> KetyaBillboard::billboardVels_klt;//
+float KetyaBillboard::size;*/
+
+KetyaBillboard::KetyaBillboard(float x, float y){
+    pos = ofVec3f(x,y,0);
+    size = 1; // ここで大きさを指定してやる
+}
+
+void KetyaBillboard::update(){
+    // パーティクルを追加
+    count++;
+    if(((int)ofRandom(0,3))==1){
+        int j;
+        billboardVels_kp.push_back(pos);
+        billboardVels_kc.push_back(pos);
+        ofVec3f v_buf;
+        v_buf = ofPoint(ofRandom(-1, 1), ofRandom(-1,1),0);
+        v_buf = 0.3*size*ofRandom(1)*v_buf.normalize(); //初期速度0.3
+        billboardVels_kv.push_back(v_buf);
+        billboardVels_klt.push_back(lt);
+        billboardVels_ks.push_back(ofVec3f(size));
+        ofFloatColor bufcol;
+        bufcol.setHsb(ofRandom(0.6,0.65), ofRandom(0, 0.4), 1,1);
+        //bufcol.set(ofRandom(0,1),ofRandom(0,1),ofRandom(0,1),0.5);
+        billboardVels_kcolor.push_back(bufcol);
+    }
+    for (int i = 0 ; i<billboardVels_kp.size(); i++) {
+        billboardVels_kp[i] += billboardVels_kv[i];
+        ofPoint d = billboardVels_kp[i]-billboardVels_kc[i];
+        billboardVels_kv[i].x += 0.02*(ofRandom(-1, 1)-0.05*d.x)*size; // だんだんと真ん中に寄るように
+        billboardVels_kv[i].y += 0.02*(ofRandom(-1, 1)-0.05*d.y)*size; // だんだんと真ん中に寄るように
+        billboardVels_kv[i].z += 0.2*size;//上に昇るように
+        billboardVels_klt[i]--;//残り生存時間を減らす*/
+    }
+    for (int i = 0 ; i<billboardVels_kp.size(); i++) {
+        if(billboardVels_klt[i]<=0){
+            billboardVels_kp.erase(billboardVels_kp.begin()+i);
+            billboardVels_kv.erase(billboardVels_kv.begin()+i);
+            billboardVels_kc.erase(billboardVels_kc.begin()+i);
+            billboardVels_klt.erase(billboardVels_klt.begin()+i);
+            billboardVels_ks.erase(billboardVels_ks.begin()+i);
+            billboardVels_kcolor.erase(billboardVels_kcolor.begin()+i);
+        }
+    }
+    //ofVec3f* billboardVels_kpt = new ofVec3f[billboardVels_kp.size()];
+    billboards_k.setVertexData(&billboardVels_kp[0],billboardVels_kp.size(),GL_STATIC_DRAW);
+    billboards_k.setNormalData(&billboardVels_ks[0],billboardVels_ks.size(),GL_STATIC_DRAW);
+    billboards_k.setColorData(&billboardVels_kcolor[0],billboardVels_kcolor.size(),GL_STATIC_DRAW);
+}
+
+void KetyaBillboard::setup(){    
+    //billboardShader_k.load("shadersGL2/Billboard");
+    
+    ofLoadImage(texture_k, "textures/snow.png");
+    //texture_k.loadImage("textures/snow.png");
+    ofEnableAlphaBlending();
+    
+    
+#ifdef TARGET_OPENGLES
+    billboardShader_k.load("shaders_gles/shader");
+#else
+    billboardShader_k.load("shaders/shader");
+#endif
+    //
+    //
+    //---------------------------------------------------------------------
+
+}
+
+void KetyaBillboard::draw(){
+    glPointSize(2);
+    //billboardShader_k.begin();
+    ofEnableAlphaBlending();
+    ofEnablePointSprites(); // not needed for GL3/4
+    texture_k.getTextureReference().bind();
+    billboards_k.draw(GL_POINTS, 0, (int)billboardVels_kp.size());
+    texture_k.getTextureReference().unbind();
+    ofDisablePointSprites(); // not needed for GL3/4
+    //billboardShader_k.end();
+    //ケチャ
+}
+
+
+
+/*
+ofImage KetyaParticle::img;
+
+KetyaParticle::KetyaParticle(ofPoint _p, float _size){
+    size = _size;
+    p = _p;
+    v = ofPoint(ofRandom(-1, 1), ofRandom(-1,1),0);
+    v = 0.3*size*ofRandom(1)*v.normalize(); //初期速度0.3
+    c = _p;
+}
+
+void KetyaParticle::setup(){
+    img.loadImage("textures/leftbackgood.png");
+}
+
+void KetyaParticle::update(){
+    p += v;
+    ofPoint d = p-c;
+    v.x += 0.02*(ofRandom(-1, 1)-0.05*d.x)*size; // だんだんと真ん中に寄るように
+    v.y += 0.02*(ofRandom(-1, 1)-0.05*d.y)*size; // だんだんと真ん中に寄るように
+    v.z += 0.2*size;//上に昇るように
+    --lt;//残り生存時間を減らす
+}
+
+void KetyaParticle::draw(){
+    ofPlanePrimitive ba;
+    ba.set(5*size,5*size);
+    //ofTranslate(,,p.z);
+    //ofRotateX(-90);
+    ba.setPosition(p.x,p.y,p.z);
+    ba.setResolution(3,3);
+    ba.draw();
+    //img.draw(p,5*size, 5*size);
+}
+
+bool KetyaParticle::isDead(){
+    return (lt <= 0);
+}
+
+KetyaBall::KetyaBall(float x, float y){
+    pos = ofPoint(x,y,0);
+    size = 2; // ここで大きさを指定してやる
+}
+
+void KetyaBall::update(){
+    // パーティクルを追加
+    for(int i=0; i<1; ++i){
+        ps.push_back(KetyaParticle(pos, size));
+    }
+    for (vector<KetyaParticle>::iterator it=ps.begin(); it != ps.end(); ++it) {
+        it->update();
+    }
+    for (vector<KetyaParticle>::iterator it=ps.begin(); it != ps.end(); ++it) {
+        if(it->isDead()){
+            ps.erase(it);
+            --it;
+        }
+    }
+}
+
+void KetyaBall::draw(){
+    ofSetColor(255,255,255,128);
+    for (vector<KetyaParticle>::iterator it=ps.begin(); it != ps.end(); ++it) {
+        it->draw();
+    }
+}
+*/
+
+
+
+
+
 ObjSimple::ObjSimple(){
 }
 

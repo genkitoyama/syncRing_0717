@@ -10,6 +10,67 @@
 #include "ofMain.h"
 
 
+#define KETYA_NUM 3000
+
+class KetyaBillboard {
+    ofShader billboardShader_k;
+    ofImage texture_k;
+    ofVbo billboards_k;
+    vector<ofVec3f> billboardVels_kp;//position
+    vector<ofVec3f> billboardVels_kv;//vel
+    vector<ofVec3f> billboardVels_kc;//center of fire
+    vector<ofVec3f> billboardVels_ks;//size
+    vector<ofFloatColor> billboardVels_kcolor;//color
+    vector<int> billboardVels_klt;//left time
+    float size;
+    int count;
+    int lt=40;
+public:
+    KetyaBillboard(){};
+    KetyaBillboard(float x, float y);
+    void setup();
+    void update();
+    void draw();
+    ofVec3f pos; // 炎の位置
+};
+
+
+/*
+class KetyaParticle{
+private:
+    ofPoint p; // 位置
+    ofPoint v; // 速度
+    ofPoint c; // 炎自体の中心位置
+    float size; // 炎の大きさ
+    int lt=40; //消えるまでの時間
+    
+public:
+    static ofImage img; // パーティクルの画像を読み込む
+    KetyaParticle(){};
+    KetyaParticle(ofPoint _p, float _size);
+    static void setup();
+    void update();
+    void draw();
+    bool isDead();
+};
+
+class KetyaBall {
+    vector<KetyaParticle> ps; // パーティクルの配列
+    ofPoint pos; // 炎の位置
+    float size; // 炎の大きさ
+public:
+    KetyaBall(){};
+    KetyaBall(float x, float y);
+    void setup();
+    void update();
+    void draw();
+};*/
+
+
+
+
+
+
 class ObjHuman {
     
 public:
