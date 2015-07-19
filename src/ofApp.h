@@ -5,6 +5,7 @@
 #include "ObjHuman.h"
 #include "ofxGui.h"
 #include "ofxOsc.h"
+#include "Firework.h"
 
 #define HOST "localhost"
 
@@ -38,6 +39,8 @@ public:
     
     ofVideoPlayer timeline;
     bool bTimelinePaused = false;
+    ofVideoPlayer sakura;
+    bool bPausedSakura = false;
     
     ofImage slide[4];
     int currentSlide;
@@ -167,6 +170,27 @@ public:
     ofImage texTorii;
     ObjSimple objTorii;
     
+    ofImage texGameStart;
+    bool bGameStart = false;
+    ofImage texZukkyun;
+    bool bZukkyun = false;
+    ofImage texNainai;
+    bool bNainai = false;
+    ofImage texHajimaruyo;
+    bool bHajimaruyo = false;
+    ofImage texKawaii;
+    bool bKawaii = false;
+    ofImage texDokkyun;
+    bool bDokkyun = false;
+    ofImage texYoiyoi;
+    bool bYoiyoi = false;
+    ofImage texDodon;
+    bool bDodon = false;
+    ofImage texZokkon;
+    bool bZokkon = false;
+    ofImage texBakkyun;
+    bool bBakkyun = false;
+    
     //ケチャ
     //vector<KetyaBall> Ketyas;
     
@@ -220,9 +244,9 @@ public:
         {"21","22","23","24","matsu","1","2","3","4","5"},
         {"21","22","23","24","matsu","1","2","3","4","5"}};
     
-    char texlib2[3][20]={"right","center","left"};
-    char texlib3[2][20]={"front","back"};
-    char texlib4[2][20]={"good","ng"};
+    char texlib2[3][20]={"_r","_c","_l"};
+    char texlib3[2][20]={"_f","_b"};
+    char texlib4[2][20]={"_g","nogood"};
     int commentxpos[3]={300,0,-300};
     int commentypos[2]={200,-200};
     bool commentdraw[3][2][2];//good or ngコメントを出すかどうか
@@ -268,5 +292,6 @@ public:
     ofVec3f billboardVels[NUM_BILLBOARDS];
     
     ofSoundPlayer mySound;
-
+    
+    vector<Firework> fs;
 };

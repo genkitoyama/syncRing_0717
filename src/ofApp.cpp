@@ -4,7 +4,7 @@
 void ofApp::setup(){
     //ofSetVerticalSync(true);
     ofSetFrameRate(30);
-    ofSetCircleResolution(128);
+    ofSetCircleResolution(32);
     
     ofSetWindowPosition(1921, 0);
     ofSetFullscreen(true);
@@ -74,10 +74,24 @@ void ofApp::setup(){
     font2.loadFont("parukana_herf.ttf", 150);
     //VALkana/valkana_standard.otf
     
-    //timeline.loadMovie("../../../timeline_0716.mov");      //音あり
-    timeline.loadMovie("tl_0716.mp4");              //音なし
+    timeline.loadMovie("../../../0720.mov");      //音あり
+    //timeline.loadMovie("tl_0716.mp4");              //音なし
     timeline.play();
     timeline.setPaused(true);
+    
+    sakura.loadMovie("../../../sakura.mov");
+    sakura.play();
+    sakura.setPaused(true);
+    
+    texGameStart.loadImage("tex/gamestart.png");
+    texZukkyun.loadImage("tex/zukkyun.png");
+    texNainai.loadImage("tex/nainai.png");
+    texHajimaruyo.loadImage("tex/hajimaruyo.png");
+    texKawaii.loadImage("tex/kawaii.png");
+    texDokkyun.loadImage("tex/dokkyun.png");
+    texYoiyoi.loadImage("tex/yoiyoi.png");
+    texDodon.loadImage("tex/dodon.png");
+    texZokkon.loadImage("tex/zokkon.png");
     
     //2D関連
     bDraw2d = false;
@@ -343,6 +357,12 @@ void ofApp::update(){
     timeline.update();
     timer = ofGetElapsedTimeMillis()-startTime;
     
+    sakura.update();
+    if(bPausedSakura){
+        sakura.setPaused(false);
+        bPausedSakura=false;
+    }
+    
     //松
     for (int i=0; i<NUM_BILLBOARDS; i++) {
         billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
@@ -378,21 +398,56 @@ void ofApp::update(){
         if(timer < 70942){//1番
             if(timer < 21096){//説明画面中
                 sceneId = 1;
+                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
+                texlibnum=0;
+                objectPct=0;
             }
             else if(timer < 29373){//ぐるぐる
                 sceneId = 12;
+                cameraId = 5;//ぐるぐるアングル
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
+                
+                if(timer > 21500 && timer < 24500){     //はじまるよ
+                    bHajimaruyo = true;
+                }else{
+                    bHajimaruyo = false;
+                }
+                
             }
             else if(timer < 31797){//止まってスタート
+                bGameStart = true;
                 sceneId = 13;
+                cameraId = 1;//ストップアングル
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
             }else{//１Aメロの間は上昇
+                bGameStart = false;
                 sceneId = 14;
+                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
+                
+                if(timer > 34232 && timer < 35008){     //ずっきゅん
+                    bZukkyun = true;
+                }else{
+                    bZukkyun = false;
+                }
+                
+                if(timer > 41500 && timer < 43176){     //ないない
+                    bNainai = true;
+                }else{
+                    bNainai = false;
+                }
+                
+                if(timer > 45160 && timer < 46000){     //ドッキュン
+                    bDokkyun = true;
+                }else{
+                    bDokkyun = false;
+                }
+                
             }
-            texlibnum=0;
-            objectPct=20;
         }else if(timer < 101119){   //1サビ
             sceneId = 2;
             texlibnum=1;
@@ -401,22 +456,41 @@ void ofApp::update(){
             sceneId = 3;
             texlibnum=1;
             objectPct=20;
+            
+            if(timer > 103100 && timer < 103930){     //ぞっこん
+                bZokkon = true;
+            }else{
+                bZokkon = false;
+            }
+            
+            if(timer > 110210 && timer < 112091){     //かわいい
+                bKawaii = true;
+            }else{
+                bKawaii = false;
+            }
+            
+            if(timer > 114126 && timer < 114767){     //ばっきゅん
+                bBakkyun = true;
+            }else{
+                bBakkyun = false;
+            }
+            
         }else if(timer < 169783){   //2番サビ
             sceneId = 32;
             texlibnum=1;
-            objectPct=20;
-        }else if(timer < 183629){   //よいよい
+            objectPct=30;
+        }else if(timer < 182275){   //よいよい
             sceneId = 4;
             texlibnum=2;
-            objectPct=25;
+            objectPct=20;
         }else if(timer < 194000){   //ケチャ
             sceneId = 42;
             texlibnum=2;
-            objectPct=25;
+            objectPct=0;
         }else if (timer < 224000){
             sceneId = 5;
             texlibnum=2;            //ラスト
-            objectPct=40;
+            objectPct=35;
         }else if (timer < 230535){
             sceneId = 6;
         }else if (timer < 235535){
@@ -883,6 +957,12 @@ void ofApp::draw(){
         }
     }
     
+    //桜
+    if(currentHaikei == 5){
+        ofSetColor(255);
+        sakura.draw(240, 0);
+    }
+    
     if(currentSlide>=4){
         ofSetColor(255);
         timeline.draw(240, 0);
@@ -968,6 +1048,32 @@ void ofApp::draw(){
             ObjHumans[i].draw();
         }
     }
+    
+    //花火
+    for (int i = 0; i < fs.size(); i++){
+        fs[i].draw();
+    }
+    
+    ofEnableAlphaBlending();
+    if(bZukkyun){
+        texZukkyun.draw(240, 0);
+    }else if (bNainai){
+        texNainai.draw(240, 0);
+    }else if(bKawaii){
+        texKawaii.draw(240, 0);
+    }else if(bZokkon){
+        texZokkon.draw(240, 0);
+    }else if(bDokkyun){
+        texDokkyun.draw(240, 0);
+    }else if(bGameStart){
+        texGameStart.draw(240, 0);
+    }else if(bHajimaruyo){
+        texHajimaruyo.draw(240, 0);
+    }else if(bBakkyun){
+        texBakkyun.draw(240, 0);
+    }
+    ofDisableAlphaBlending();
+
     
     //シンクロ率表示
     //ofSetColor(255);
@@ -1337,6 +1443,11 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    for(int i=0;i<20;i++){
+        Firework f;
+        f.setup((int)ofRandom(7));
+        fs.push_back(f);
+    }
 }
 
 //--------------------------------------------------------------
