@@ -15,7 +15,7 @@
 class KetyaBillboard {
     ofShader billboardShader_k;
     ofImage texture_k;
-    ofVbo billboards_k;
+    //ofVbo billboards_k;
     vector<ofVec3f> billboardVels_kp;//position
     vector<ofVec3f> billboardVels_kv;//vel
     vector<ofVec3f> billboardVels_kc;//center of fire
@@ -29,6 +29,8 @@ public:
     KetyaBillboard(){};
     KetyaBillboard(float x, float y);
     void setup();
+    void add(ofVec3f pos_);
+    void updateonly();
     void update();
     vector<ofVec3f> getsize();
     vector<ofVec3f> getpos();

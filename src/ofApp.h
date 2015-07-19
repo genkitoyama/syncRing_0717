@@ -141,6 +141,7 @@ public:
     vector<float> boxScale2;
     
     ofVbo vbo;
+    ofVbo vbo2;
     ofShader shader;
     ofShader shader2;
     

@@ -98,10 +98,12 @@ void ofApp::setup(){
     objTorii.setup(1200, 1200, 0, 800, 300);
     
     //ここからケチャ
-    for(int i =0; i<300 ; i++){
+    /*for(int i =0; i<300 ; i++){
         //Ketyas.push_back(KetyaBall(ofRandom(-100,100), ofRandom(-100,100)));
         Ketyas_billboard.push_back(KetyaBillboard(ofRandom(-500,500), ofRandom(-500,500)));
-    }
+    }*/
+    Ketyas_billboard.push_back(KetyaBillboard(0,0));
+    
     for (int i=0;i<Ketyas_billboard.size();i++){
         Ketyas_billboard[i].setup();
     }
@@ -152,10 +154,6 @@ void ofApp::setup(){
         }
     }
     
-    // upload the data to the vbo
-    int total = (int)points.size();
-    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
     
     // load the shader
     
@@ -322,9 +320,26 @@ void ofApp::update(){
         it->update();
     }*/
     
-    for (int i=0;i<Ketyas_billboard.size();i++){
+    /*for (int i=0;i<Ketyas_billboard.size();i++){
         Ketyas_billboard[i].update();
+    }*/
+    if(bKetya){
+//        Ketyas_billboard[0].add(ofVec3f(0,0,0));
+  //      Ketyas_billboard[0].add(ofVec3f(100,0,0));
+   //     Ketyas_billboard[0].add(ofVec3f(-100,0,0));
+        
+        for(int i = 0; i< points.size();i++){
+            Ketyas_billboard[0].add(points[i]);
+        }
+        for(int i = 0; i< points2.size();i++){
+            Ketyas_billboard[0].add(points2[i]);
+        }
+        Ketyas_billboard[0].updateonly();
+
     }
+    
+    
+    
     timeline.update();
     timer = ofGetElapsedTimeMillis()-startTime;
     
@@ -355,29 +370,25 @@ void ofApp::update(){
     
 
     if(timeline.isPlaying()){
-        timer = timer *30;
-        //timer = timer *3;
+        //timer = timer *30;
+        timer = timer *3;
         //---------------------------------------------
         //    時間制御
         //---------------------------------------------
         if(timer < 70942){//1番
             if(timer < 21096){//説明画面中
                 sceneId = 1;
-                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
             }
             else if(timer < 29373){//ぐるぐる
                 sceneId = 12;
-                cameraId = 5;//ぐるぐるアングル
                 if(!cameraModeForce)cameraMode=2;
             }
             else if(timer < 31797){//止まってスタート
                 sceneId = 13;
-                cameraId = 1;//ストップアングル
                 if(!cameraModeForce)cameraMode=2;
             }else{//１Aメロの間は上昇
                 sceneId = 14;
-                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
             }
             texlibnum=0;
@@ -419,22 +430,26 @@ void ofApp::update(){
         }
         if(bsceneChange){//シーンが変わった瞬間だけ立つ
             switch (sceneId) {
-                case 1:
+                case 1://説明画面中
+                    cameraId = 1;
                     bKetya = false;
                     currentHaikei=6;
                     countHaikei=1;
                     break;
-                case 12:
+                case 12://ぐるぐる
+                    bKetya = false;
+                    cameraId = 5;//ぐるぐるアングル
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 13://止まってスタート
+                    cameraId = 1;//ストップアングル
                     bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
-                case 13:
-                    bKetya = false;
-                    currentHaikei=1;
-                    countHaikei=1;
-                    break;
-                case 14:
+                case 14://１Aメロの間は上昇
+                    cameraId = 1;
                     bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
@@ -569,6 +584,37 @@ void ofApp::draw3d(){
             camera.setPosition(cx, cy, 400*(cos(cameraCount/20.0)+2)/3);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
+        case 6:
+            camera.setPosition(0, -300, 1000);
+            camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
+            break;
+        case 7:
+            camera.setPosition(-800, 800, 200);
+            camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
+            break;
+        case 8:
+            cx = -1200*cos( cameraCount/20.0 );
+            cy = 1200*sin( cameraCount/20.0 );
+            camera.setPosition(cx, cy, 400*(cos(cameraCount/20.0)+2)/3);
+            camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
+        case 9:
+            cx = -1200*cos( cameraCount/40.0 )*(cos(cameraCount/40.0)+2)/3;
+            cy = 1200*sin( cameraCount/40.0 )*(cos(cameraCount/40.0)+2)/3;
+            camera.setPosition(cx, cy, 1600);
+            camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
+            break;
+        case 10:
+            cx = 1200*cos( cameraCount/40.0 )*(cos(cameraCount/40.0)+2)/3;
+            cy = 1200*sin( cameraCount/40.0 )*(cos(cameraCount/40.0)+2)/3;
+            camera.setPosition(cx, cy, 400*(cos(cameraCount/40.0)+2)/3);
+            camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
+            break;
+        case 11:
+            cx = 0;
+            cy = -1200+cameraCount*30;
+            camera.setPosition(cx, cy, 200);
+            camera.lookAt(ofVec3f(0,cy+200,0),ofVec3f(0,0,1));
+            break;
         default:
             break;
     }
@@ -646,17 +692,27 @@ void ofApp::draw3d(){
     texture.bind();
     ofSetColor(0, 100, 255);
     int total = (int)points.size();
-    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0, (int)points.size());
+    if(total){
+        vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+        vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+        vbo.draw(GL_POINTS, 0, (int)points.size());
+    }
     ofSetColor(255, 100, 90);
     total = (int)points2.size();
-    vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0,(int)points2.size());
+    if(total){
+        vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
+        vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
+        vbo.draw(GL_POINTS, 0,(int)points2.size());
+    }
     texture.unbind();
     //ケチャ
     if(bKetya){
+        /*for(int i = 0; i< points.size();i++){
+            Ketyas_billboard[0].update(points[i]);
+        }
+        for(int i = 0; i< points2.size();i++){
+            Ketyas_billboard[0].update(points2[i]);
+        }*/
         texture.bind();
         //ofSetColor(230, 230, 255);
         vector<ofVec3f> sizebuf;
@@ -667,10 +723,10 @@ void ofApp::draw3d(){
             sizebuf = Ketyas_billboard[i].getsize();
             colorbuf = Ketyas_billboard[i].getcolor();
             total = (int)sizebuf.size();
-            vbo.setVertexData(&posbuf[0], total, GL_STATIC_DRAW);
-            vbo.setNormalData(&sizebuf[0], total, GL_STATIC_DRAW);
-            vbo.setColorData(&colorbuf[0], total, GL_STATIC_DRAW);
-            vbo.draw(GL_POINTS, 0,(int)posbuf.size());
+            vbo2.setVertexData(&posbuf[0], total, GL_STATIC_DRAW);
+            vbo2.setNormalData(&sizebuf[0], total, GL_STATIC_DRAW);
+            vbo2.setColorData(&colorbuf[0], total, GL_STATIC_DRAW);
+            vbo2.draw(GL_POINTS, 0,(int)posbuf.size());
         }
         texture.unbind();
     }
@@ -930,7 +986,7 @@ void ofApp::draw(){
         if(syncScoreShow > 98){
             syncScoreShow = 100;
         }
-        //if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
+        if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
         if(syncScoreMovingNot || syncScoreMoving){
             if((syncScoreMoving*100.0/(syncScoreMoving+syncScoreMovingNot)) > scorespeedthr2){
                 syncScoreShowFlag = true;
@@ -943,7 +999,7 @@ void ofApp::draw(){
         syncScoreMoving=0;
         syncScoreMovingNot=0;
     }
-    if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
+    //if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
     if(currentSlide>=4 && syncScoreShowFlag && (!bfinish)){
         if(syncScoreShow<90){
             ofSetColor(255);
@@ -1000,7 +1056,7 @@ void ofApp::draw(){
         ofSetColor(255,255,255,230);
         haikei[5].draw(240,0);
         ofSetLineWidth(25);
-        if(countHappyou>30){
+        if(countHappyou>30 && (scoreLog.size()>0)){
             happyounum=MIN((int)((countHappyou-30)),scoreLog.size()-1);
             histwidth = (900.0/scoreLog.size());
             //ofSetColor(255,255,255,128);
@@ -1130,9 +1186,13 @@ void ofApp::keyPressed(int key){
     }else if(key == '1'){
         bFogSw = true;//白霧を切り替えるスイッチ
     }else if(key == '2'){
-        bDraw2d = !bDraw2d;
+        //bDraw2d = !bDraw2d;
+        cameraCount = 0;
+        cameraId--;
     }else if(key == '3'){
-        bDraw3d = !bDraw3d;
+        cameraCount = 0;
+        cameraId++;
+        //bDraw3d = !bDraw3d;
     }else if(key == '4') {
         points.clear();
     }else if(key == '5') {
