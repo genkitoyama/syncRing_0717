@@ -11,6 +11,12 @@ void ofApp::setup(){
     
     img.loadImage("sora.jpg");
     
+    mySound.loadSound("../../../kirakirabgm.mp3"); //サウンドファイルの読込み
+    mySound.setLoop(true); //ループ再生をONに
+    mySound.setVolume(0.2);
+    mySound.play(); //サウンド再生開始
+    
+    
     for(int i=0;i<4;i++){
         char c1[32];
         sprintf(c1, "slides/s_%04d.png", i+1);
@@ -44,13 +50,14 @@ void ofApp::setup(){
     
     gui.setup("panel");
     gui.add(missThr.set("missThr", 100,1,200));//失敗と判定する閾値
-    gui.add(scalex.set("3d scale x", 25,1,80));
-    gui.add(scaley.set("3d scale y", 25,1,80));
+    gui.add(scalex.set("3d scale x", 29,1,80));
+    gui.add(scaley.set("3d scale y", 29,1,80));
     gui.add(scalez.set("3d scale z", 1,1,80));
     gui.add(humanscale.set("size scale", 2,1,10));
     gui.add(humansizeoffset.set("size offset", 5,1,256));
     gui.add(timelineMethod.set("Timeline Draw Method", 0,0,3));
-    
+    gui.add(scorespeedthr.set("SyncScore speed thr", 3,0,80));
+    gui.add(scorespeedthr2.set("SyncScore Moving Ratio thr", 20,0,100));
     missThr.addListener(this, &ofApp::valChanged);
     scalex.addListener(this, &ofApp::valChanged);
     scaley.addListener(this, &ofApp::valChanged);
@@ -67,7 +74,7 @@ void ofApp::setup(){
     font2.loadFont("parukana_herf.ttf", 150);
     //VALkana/valkana_standard.otf
     
-    //timeline.loadMovie("timeline_0716.mov");      //音あり
+    //timeline.loadMovie("../../../timeline_0716.mov");      //音あり
     timeline.loadMovie("tl_0716.mp4");              //音なし
     timeline.play();
     timeline.setPaused(true);
@@ -348,7 +355,7 @@ void ofApp::update(){
     
 
     if(timeline.isPlaying()){
-        timer = timer *10;
+        timer = timer *30;
         //timer = timer *3;
         //---------------------------------------------
         //    時間制御
@@ -399,7 +406,12 @@ void ofApp::update(){
             sceneId = 5;
             texlibnum=2;            //ラスト
             objectPct=40;
+        }else if (timer < 230535){
+            sceneId = 6;
+        }else if (timer < 235535){
+            sceneId = 7;
         }else{
+            sceneId = 8;
         }
         if(sceneId!=sceneId_1f){
             bsceneChange = true;
@@ -408,34 +420,42 @@ void ofApp::update(){
         if(bsceneChange){//シーンが変わった瞬間だけ立つ
             switch (sceneId) {
                 case 1:
+                    bKetya = false;
                     currentHaikei=6;
                     countHaikei=1;
                     break;
                 case 12:
+                    bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
                 case 13:
+                    bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
                 case 14:
+                    bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
                 case 2://1サビ
+                    bKetya = false;
                     currentHaikei=2;
                     countHaikei=1;
                     break;
                 case 3://２番
+                    bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
                 case 32://２番サビ
+                    bKetya = false;
                     currentHaikei=2;
                     countHaikei=1;
                     break;
                 case 4://よいよい
+                    bKetya = false;
                     currentHaikei=3;
                     countHaikei=1;
                     break;
@@ -450,7 +470,14 @@ void ofApp::update(){
                     currentHaikei=5;
                     countHaikei=1;
                     break;
-                case 6:
+                case 6://早めに流れ止める
+                    break;
+                case 7://終わった瞬間
+                    bfinish = true;
+                    break;
+                case 8://成績発表
+                    bHappyou = true;
+                    countHappyou = 0;
                     break;
                 default:
                     break;
@@ -888,16 +915,37 @@ void ofApp::draw(){
     
     //シンクロ率表示
     //ofSetColor(255);
-    if(cameraCount%2==0){
-        if(sizes.size() || sizes2.size()){
-            syncScore = ((int)(sizes.size()*100/(sizes.size()+sizes2.size())) + syncScore*3)/4;
-            if(syncScore > 98){
-                syncScore = 100;
-            }
+    if(sizes.size() || sizes2.size()){
+        syncScoreBuf = (int)(sizes.size()*100/(sizes.size()+sizes2.size()));
+        if(velx_ave*velx_ave+vely_ave*vely_ave > scorespeedthr){
+            syncScore = syncScoreBuf;
+            syncScoreMoving++;
+        }else{
+            syncScoreMovingNot++;
         }
     }
-    if(currentSlide>=4){
-        if(syncScore<90){
+    if(cameraCount%20==0){
+        syncScoreShow = syncScore;
+        //syncScore = ((int)(sizes.size()*100/(sizes.size()+sizes2.size())) + syncScore*3)/4;
+        if(syncScoreShow > 98){
+            syncScoreShow = 100;
+        }
+        //if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
+        if(syncScoreMovingNot || syncScoreMoving){
+            if((syncScoreMoving*100.0/(syncScoreMoving+syncScoreMovingNot)) > scorespeedthr2){
+                syncScoreShowFlag = true;
+            }else{
+                syncScoreShowFlag = false;
+            }
+        }
+        syncScoreMoving2 = syncScoreMoving;
+        syncScoreMovingNot2 = syncScoreMovingNot;
+        syncScoreMoving=0;
+        syncScoreMovingNot=0;
+    }
+    if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
+    if(currentSlide>=4 && syncScoreShowFlag && (!bfinish)){
+        if(syncScoreShow<90){
             ofSetColor(255);
         }else{
             float hue = fmodf(ofGetElapsedTimef()*30,255);
@@ -905,10 +953,13 @@ void ofApp::draw(){
             c.setHsb(hue, 230, 230);
             ofSetColor(c);
         }
-        font.drawString(ofToString(syncScore),ofGetWidth()/2-100,ofGetHeight()/2+150);
-        font2.drawString("%",ofGetWidth()/2+250,ofGetHeight()/2+150);
+        font.drawString(ofToString(syncScoreShow),ofGetWidth()/2-100,ofGetHeight()/2+150);
+        if(syncScoreShow==100){
+            font2.drawString("%",ofGetWidth()/2+350,ofGetHeight()/2+150);
+        }else{
+            font2.drawString("%",ofGetWidth()/2+250,ofGetHeight()/2+150);
+        }
     }
-    
     
     //FPS等の情報
     string info = "FPS: "+ofToString(ofGetFrameRate(), 3);
@@ -917,12 +968,14 @@ void ofApp::draw(){
     //info += "\npress z: clap x: right c: left";
     info += "\nelapsed time: "+ofToString(ofGetElapsedTimeMillis());
     info += "\ntimer: "+ofToString(timer)+" ms";
-    info += "\nParticle Matsu: "+ofToString(NUM_BILLBOARDS);
     info += "\nTexture LineID: "+ofToString(texlibnum);
     info += "\nHaikei: "+ofToString(currentHaikei)+":"+ofToString(countHaikei);
     info += "\nScene: "+ofToString(sceneId)+":"+ofToString(sceneId_1f);
-    
-    
+    info += "\nvel_ave: "+ofToString(velx_ave)+":"+ofToString(vely_ave);
+    info += "\nsyncscore: "+ofToString(syncScoreBuf)+":"+ofToString(syncScore)+":"+ofToString(syncScoreShow);
+    info += "\nScoreMoving"+ofToString(syncScoreMovingNot2)+":"+ofToString(syncScoreMoving2);
+    info += "\nScoreLogSize "+ofToString(scoreLog.size());
+
     //両側の黒部分
     ofSetColor(0);
     ofFill();
@@ -931,7 +984,7 @@ void ofApp::draw(){
     
     ofSetColor(255);
     if(!bHideGui) gui.draw();                                          //本番時は ! とる
-    if(!bHideInfo) ofDrawBitmapString(info, 20, ofGetHeight()-100);
+    if(!bHideInfo) ofDrawBitmapString(info, 20, ofGetHeight()-300);
     
     if(currentSlide < 4){                                              //スライド透過表示
         ofEnableAlphaBlending();
@@ -939,6 +992,42 @@ void ofApp::draw(){
         ofDisableAlphaBlending();
     }
     
+    if(bHappyou){
+        countHappyou++;
+        int happyounum;
+        float histwidth;
+        ofEnableAlphaBlending();
+        ofSetColor(255,255,255,230);
+        haikei[5].draw(240,0);
+        ofSetLineWidth(25);
+        if(countHappyou>30){
+            happyounum=MIN((int)((countHappyou-30)),scoreLog.size()-1);
+            histwidth = (900.0/scoreLog.size());
+            //ofSetColor(255,255,255,128);
+            //ofLine(20,700,820,700);
+            //ofLine(40,100,40,720);
+            ofColor c;
+            for(int i =0;i<happyounum;i++){
+                if(i==0)continue;
+                c.setHsb(255*i/scoreLog.size(), 255, 255);
+                ofSetColor((int)c.r,(int)c.g,(int)c.b,128);
+                ofLine((int)(280+i*histwidth),2000-19*scoreLog[i-1],(int)(280+(i+1)*histwidth),2000-19*scoreLog[i]);
+            }
+            font.drawString(ofToString(scoreLog[happyounum]),ofGetWidth()-750,300);
+            if(scoreLog[happyounum]==100){
+                font2.drawString("%",ofGetWidth()-300,300);
+            }else{
+                font2.drawString("%",ofGetWidth()-400,300);
+            }
+            if(countHappyou-30 <= scoreLog.size()){
+                if(scoreLog[happyounum]==100){
+                    count100p++;
+                }
+            }
+            font.drawString(ofToString(count100p),ofGetWidth()/2-300,ofGetHeight()/2+200);
+        }
+        ofDisableAlphaBlending();
+    }
 }
 
 //--------------------------------------------------------------
@@ -1009,6 +1098,7 @@ void ofApp::keyPressed(int key){
         currentSlide++;
         if(currentSlide>=4 && currentSlide <= 7){
             if(currentSlide==4){
+                mySound.stop();
                 currentHaikei=6;
                 countHaikei=countHaikeiMax-1;
                 cameraId = 1;
@@ -1018,11 +1108,18 @@ void ofApp::keyPressed(int key){
     }
     else if(key == OF_KEY_LEFT){
         currentSlide--;
+        if(currentSlide==3){
+            mySound.play();
+            currentHaikei=0;
+            countHaikei=countHaikeiMax-1;
+            cameraId = 4;
+        }
         if(currentSlide<0) currentSlide=0;
     }
-    else if(key == OF_KEY_RETURN){      //enterで曲スタート
+    else if(key == OF_KEY_RETURN && (currentSlide>=4)){      //enterで曲スタート
         timeline.setPaused(false);
         startTime = ofGetElapsedTimeMillis();
+        scoreLog.clear();
     }
     else if(key == 's') {
         gui.saveToFile("settings.xml");
@@ -1162,7 +1259,6 @@ void ofApp::keyPressed(int key){
             cameraMode=0;
         }
     }
-    
 }
 
 //--------------------------------------------------------------

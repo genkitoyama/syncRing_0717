@@ -62,6 +62,21 @@ public:
     int score;
     
     int syncScore = 0;
+    int syncScoreBuf = 0;
+    int syncScoreShow = 0;
+    int syncScoreMoving = 0;
+    int syncScoreMovingNot = 0;
+    int syncScoreMoving2 = 0;
+    int syncScoreMovingNot2 = 0;
+    
+    bool syncScoreShowFlag = false;
+    vector<int> scoreLog;
+    
+    bool bfinish = false;
+    
+    bool bHappyou = false;
+    int countHappyou = 0;
+    int count100p = 0;
     
     ofParameter<int> missThr;
     ofParameter<int> scalex;//8bit
@@ -70,6 +85,8 @@ public:
     ofParameter<int> humanscale;
     ofParameter<int> humansizeoffset;
     ofParameter<int> timelineMethod;
+    ofParameter<int> scorespeedthr;
+    ofParameter<int> scorespeedthr2;
     
     ofxPanel gui;
     
@@ -248,5 +265,7 @@ public:
     ofImage texture_;
     ofVboMesh billboards;
     ofVec3f billboardVels[NUM_BILLBOARDS];
+    
+    ofSoundPlayer mySound;
 
 };
