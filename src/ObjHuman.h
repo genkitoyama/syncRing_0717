@@ -30,7 +30,9 @@ public:
     KetyaBillboard(float x, float y);
     void setup();
     void update();
-    void draw();
+    vector<ofVec3f> getsize();
+    vector<ofVec3f> getpos();
+    vector<ofFloatColor> getcolor();
     ofVec3f pos; // 炎の位置
 };
 

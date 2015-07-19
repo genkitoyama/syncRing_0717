@@ -8,6 +8,7 @@
 
 #include "ObjHuman.h"
 
+
 /*ofShader KetyaBillboard::billboardShader_k;
 ofImage KetyaBillboard::texture_k;
 ofVbo KetyaBillboard::billboards_k;
@@ -19,7 +20,7 @@ float KetyaBillboard::size;*/
 
 KetyaBillboard::KetyaBillboard(float x, float y){
     pos = ofVec3f(x,y,0);
-    size = 1; // ここで大きさを指定してやる
+    size = 10; // ここで大きさを指定してやる
 }
 
 void KetyaBillboard::update(){
@@ -83,17 +84,14 @@ void KetyaBillboard::setup(){
 
 }
 
-void KetyaBillboard::draw(){
-    glPointSize(2);
-    //billboardShader_k.begin();
-    ofEnableAlphaBlending();
-    ofEnablePointSprites(); // not needed for GL3/4
-    texture_k.getTextureReference().bind();
-    billboards_k.draw(GL_POINTS, 0, (int)billboardVels_kp.size());
-    texture_k.getTextureReference().unbind();
-    ofDisablePointSprites(); // not needed for GL3/4
-    //billboardShader_k.end();
-    //ケチャ
+vector<ofVec3f> KetyaBillboard::getsize(){
+    return billboardVels_ks;
+}
+vector<ofVec3f> KetyaBillboard::getpos(){
+    return billboardVels_kp;
+}
+vector<ofFloatColor> KetyaBillboard::getcolor(){
+    return billboardVels_kcolor;
 }
 
 

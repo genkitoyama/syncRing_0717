@@ -81,6 +81,7 @@ void ofApp::setup(){
     ofDisableArbTex();//画像サイズが２のべき乗でないといけないのを無効化
     ofLoadImage(texture, "textures/dot.png");
     ofLoadImage(texture2, "textures/sensu.png");
+    ofLoadImage(texture3, "textures/snow.png");
     
     //3D Object
     cameraId = 4;
@@ -392,14 +393,11 @@ void ofApp::addPoint2(float x, float y, float z,float size) {
 
 //--------------------------------------------------------------
 void ofApp::draw3d(){
-    //ofEnableDepthTest();
-    
     points.clear();
     sizes.clear();
     points2.clear();
     sizes2.clear();
-    
-    
+
     //カメラ設定
     int cx,cy;
     cameraCount++;
@@ -443,7 +441,6 @@ void ofApp::draw3d(){
     ofEnablePointSprites();
     
     //道路表示
-    //shader2.begin();
     camera2.begin();
     ofVec4f bufpos,bufpos_1f;
     for(int i=objRoad.getIdxStart();i<objRoad.getIdxEnd();i++){
@@ -475,7 +472,6 @@ void ofApp::draw3d(){
         bufpos_1f = bufpos;
     }
     camera2.end();
-    //shader2.end();
     
     ofDisablePointSprites();
     ofDisableBlendMode();
@@ -508,7 +504,54 @@ void ofApp::draw3d(){
     }
     glDepthMask(GL_FALSE);
     
+    // this makes everything look glowy :)
+    ofEnablePointSprites();
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofEnableAlphaBlending();
+    shader.begin();
+    camera.begin();
     
+    //観客ノード
+    glPointSize(10);
+    texture.bind();
+    ofSetColor(0, 100, 255);
+    int total = (int)points.size();
+    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+    vbo.draw(GL_POINTS, 0, (int)points.size());
+    ofSetColor(255, 100, 90);
+    total = (int)points2.size();
+    vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
+    vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
+    vbo.draw(GL_POINTS, 0,(int)points2.size());
+    texture.unbind();
+    //ケチャ
+    texture.bind();
+    //ofSetColor(230, 230, 255);
+    vector<ofVec3f> sizebuf;
+    vector<ofVec3f> posbuf;
+    vector<ofFloatColor> colorbuf;
+    for(int i = 0;i<Ketyas_billboard.size();i++){
+        posbuf = Ketyas_billboard[i].getpos();
+        sizebuf = Ketyas_billboard[i].getsize();
+        colorbuf = Ketyas_billboard[i].getcolor();
+        total = (int)sizebuf.size();
+        vbo.setVertexData(&posbuf[0], total, GL_STATIC_DRAW);
+        vbo.setNormalData(&sizebuf[0], total, GL_STATIC_DRAW);
+        vbo.setColorData(&colorbuf[0], total, GL_STATIC_DRAW);
+        vbo.draw(GL_POINTS, 0,(int)posbuf.size());
+    }
+    texture.unbind();
+    
+    //ライブハウスグリッド描画
+    objFrame.draw();
+    
+    camera.end();
+    shader.end();
+    
+    ofDisablePointSprites();
+    ofDisableBlendMode();
+    ofDisableAlphaBlending();
 
     
     //基準座標
@@ -535,7 +578,6 @@ void ofApp::draw3d(){
     //    billboardShader.end();
     //    ofDisableAlphaBlending();
     //ここまで松
-    
     camera2.end();
     
     /*float boxSize = 100;
@@ -591,52 +633,13 @@ void ofApp::draw3d(){
     KetyaParticle::img.unbind();*/
     
     
-    texture.bind();
+    /*texture.bind();
 
     for (int i=0;i<Ketyas_billboard.size();i++){
         Ketyas_billboard[i].draw();
     }
-    texture.unbind();
+    texture.unbind();*/
 
-    
-    // this makes everything look glowy :)
-    ofEnablePointSprites();
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-    ofEnableAlphaBlending();
-    
-    shader.begin();
-    camera.begin();
-    
-    glPointSize(10);
-    
-    //観客ノード
-    texture.bind();
-    //texture2.bind();
-    //ofSetColor(255);
-    ofSetColor(0, 100, 255);
-    int total = (int)points.size();
-    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0, (int)points.size());
-    
-    ofSetColor(255, 100, 90);
-    total = (int)points2.size();
-    vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
-    vbo.draw(GL_POINTS, 0,(int)points2.size());
-    texture.unbind();
-    //texture2.unbind();
-    
-    //ライブハウスグリッド描画
-    objFrame.draw();
-    
-    camera.end();
-    shader.end();
-    
-    ofDisablePointSprites();
-    ofDisableBlendMode();
-    ofDisableAlphaBlending();
-    
     
     ofDisableAlphaBlending();
     camera.end();

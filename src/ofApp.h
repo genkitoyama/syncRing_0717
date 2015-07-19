@@ -129,6 +129,7 @@ public:
     float camDist;
     ofTexture texture;
     ofTexture texture2;
+    ofTexture texture3;
     
     //カメラパラメータ
     int cameraCount;
