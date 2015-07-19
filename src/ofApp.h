@@ -267,6 +267,9 @@ public:
     ofVboMesh billboards;
     ofVec3f billboardVels[NUM_BILLBOARDS];
     
+    ofImage seiseki1;
+    ofImage seiseki2;
+    
     ofSoundPlayer mySound;
 
 };

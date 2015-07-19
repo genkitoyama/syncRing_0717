@@ -9,8 +9,6 @@
 #include "ObjHuman.h"
 
 
-
-
 KetyaBillboard::KetyaBillboard(float x, float y){
     pos = ofVec3f(x,y,0);
     size = 10; // ここで大きさを指定してやる

@@ -75,6 +75,7 @@ void ofApp::setup(){
     //VALkana/valkana_standard.otf
     
     //timeline.loadMovie("../../../timeline_0716.mov");      //音あり
+    
     timeline.loadMovie("tl_0716.mp4");              //音なし
     timeline.play();
     timeline.setPaused(true);
@@ -197,6 +198,10 @@ void ofApp::setup(){
     //
     //
     //---------------------------------------------------------------------
+    
+    //成績発表テクスチャ
+    ofLoadImage(seiseki1,"textures/seiseki_kai.png");
+    ofLoadImage(seiseki2,"textures/seiseki_syncr.png");
     
     
 }   //setupここまで
@@ -370,8 +375,8 @@ void ofApp::update(){
     
 
     if(timeline.isPlaying()){
-        //timer = timer *30;
-        timer = timer *3;
+        timer = timer *30;
+        //timer = timer *3;
         //---------------------------------------------
         //    時間制御
         //---------------------------------------------
@@ -788,6 +793,8 @@ void ofApp::draw3d(){
     //texture3.getTextureReference().unbind();
     ofEnableAlphaBlending();
     
+    if(sceneId==1)return;//sceneが説明なら表示終わる
+    
     camera2.begin();
     objTorii.draw(texTorii);
     for(int i =0 ;i< objClouds.size();i++){
@@ -1055,6 +1062,8 @@ void ofApp::draw(){
         ofEnableAlphaBlending();
         ofSetColor(255,255,255,230);
         haikei[5].draw(240,0);
+        seiseki1.draw(100, 100, 200, 200);
+        seiseki2.draw(500, 500, 400, 400);
         ofSetLineWidth(25);
         if(countHappyou>30 && (scoreLog.size()>0)){
             happyounum=MIN((int)((countHappyou-30)),scoreLog.size()-1);
@@ -1083,6 +1092,7 @@ void ofApp::draw(){
             font.drawString(ofToString(count100p),ofGetWidth()/2-300,ofGetHeight()/2+200);
         }
         ofDisableAlphaBlending();
+        
     }
 }
 
