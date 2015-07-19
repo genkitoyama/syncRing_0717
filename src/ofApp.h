@@ -14,6 +14,8 @@
 #define TEXLIBLINE 4
 #define TEXLIBNUM 10
 
+#define FASTMODE
+
 class ofApp : public ofBaseApp{
 private:
     ofTrueTypeFont font;
@@ -40,12 +42,15 @@ public:
     ofImage slide[4];
     int currentSlide;
     
-    ofImage haikei[5];//(0:無し,1:)
+    ofImage haikei[6];//(0:無し,1:)
     int currentHaikei;
     int preHaikei;//フェード前の背景インデックス
     int countHaikei;//フェード用のカウンタ
     int countHaikeiMax=30;//フェードにかける時間
     
+    int sceneId = 0;//現在のシーンID
+    int sceneId_1f = 0;//前フレームのシーンID
+    bool bsceneChange = false;//シーンが変わったフラグ 前フレームとの比較で判断
     
     ofImage img;
     bool bHideImage;
@@ -134,7 +139,11 @@ public:
     //カメラパラメータ
     int cameraCount;
     ofVec3f cameraMoving;//移動するカメラ原点
+    int cameraZpos = 0;
     int cameraId;
+    bool cameraModeForce = false;//キーコマンドによって強制すげ替え
+    int cameraMode = 0;//上に行くか1 前に進むか2 止まるか0
+    int bcameradown = false;//上昇するカメラを下に下げる
     
     // 鳥居logo
     ofImage texTorii;
@@ -144,6 +153,7 @@ public:
     //vector<KetyaBall> Ketyas;
     
     vector<KetyaBillboard> Ketyas_billboard;
+    bool bKetya = false;
     
     // 雲たち
     ofImage texCloud;
@@ -169,8 +179,20 @@ public:
         {0x00,0x00,0xFF},
         {0x00,0x00,0xCC},
         {0x66,0x00,0xCC}};
-    //
+    //道路の色
+    int roadColor[7][3] = {
+        {0x00,0x00,0x00},//
+        {0x00,0xCC,0x33},//1A
+        {0xCC,0x66,0x33},//1サビ
+        {0x99,0x00,0x00},//yoiyoi
+        {0x33,0xff,0xff},//ketya
+        {0xff,0x66,0x33},//last
+        {0xff,0xff,0xff}};//kuro
     
+    int roadAlpha[7]={80,255,255,255,80,200,160
+    };
+    ofVec3f roadColorNow;
+    int roadAlphaNow;
     
     //texture library
     //コマンドは　qwertyuiop　行は上下で変更

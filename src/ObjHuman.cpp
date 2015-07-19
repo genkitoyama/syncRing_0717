@@ -232,15 +232,16 @@ ofVec4f ObjRoad::getLeftPos(int idx){
     int wbuf;
     ybuf=idx*width;
     ybuf2=idx*width-count*speed;
+    int maxalpha = 200;
     if(ybuf2 <= Ythr1 && ybuf2 >=(-Ythr1)){
-        wbuf=255;
+        wbuf=maxalpha;
     }else if(Ythr2 <= ybuf2 || ybuf2<=(-Ythr2)){
         wbuf=0;
     }else{
         if(ybuf2>0){
-            wbuf=(int)(255.0*(Ythr2-ybuf2)/(Ythr2-Ythr1));
+            wbuf=(int)(maxalpha*1.0*(Ythr2-ybuf2)/(Ythr2-Ythr1));
         }else{
-            wbuf=(int)(255.0*(Ythr2-(-ybuf2))/(Ythr2-Ythr1));
+            wbuf=(int)(maxalpha*1.0*(Ythr2-(-ybuf2))/(Ythr2-Ythr1));
         }
     }
     return ofVec4f(150*sin(idx/20.0),ybuf,(float)offsetZ,(float)wbuf);
@@ -340,7 +341,6 @@ void ObjFrame::setup(int _scalex,int _scaley,int _scalez,int _xoffset,int _yoffs
 
 void ObjFrame::draw(){
     ofSetLineWidth(1);
-    ofSetColor(255,255,255,128);
     for(int i =0; i<posFrom.size();i++){
         ofLine(posFrom[i], posTo[i]);
     }

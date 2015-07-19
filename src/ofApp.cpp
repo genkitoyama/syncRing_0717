@@ -18,7 +18,7 @@ void ofApp::setup(){
     }
     currentSlide = 0;
 
-    for(int i=0;i<5;i++){
+    for(int i=0;i<6;i++){
         char c2[32];
         sprintf(c2, "haikei/h_%04d.png", i+1);
         haikei[i].loadImage(c2);
@@ -44,9 +44,9 @@ void ofApp::setup(){
     
     gui.setup("panel");
     gui.add(missThr.set("missThr", 100,1,200));//失敗と判定する閾値
-    gui.add(scalex.set("3d scale x", 30,1,256));
-    gui.add(scaley.set("3d scale y", 30,1,256));
-    gui.add(scalez.set("3d scale z", 1,1,256));
+    gui.add(scalex.set("3d scale x", 25,1,80));
+    gui.add(scaley.set("3d scale y", 25,1,80));
+    gui.add(scalez.set("3d scale z", 1,1,80));
     gui.add(humanscale.set("size scale", 2,1,10));
     gui.add(humansizeoffset.set("size offset", 5,1,256));
     gui.add(timelineMethod.set("Timeline Draw Method", 0,0,3));
@@ -90,7 +90,6 @@ void ofApp::setup(){
     texTorii.loadImage("textures/torii.png");
     objTorii.setup(1200, 1200, 0, 800, 300);
     
-    
     //ここからケチャ
     for(int i =0; i<300 ; i++){
         //Ketyas.push_back(KetyaBall(ofRandom(-100,100), ofRandom(-100,100)));
@@ -100,6 +99,7 @@ void ofApp::setup(){
         Ketyas_billboard[i].setup();
     }
     
+    //飛行雲
     texCloud.loadImage("textures/cloud1.png");
     for (int i = 0;i<100;i++){
         ObjSimple objbuf;
@@ -107,6 +107,7 @@ void ofApp::setup(){
         objClouds.push_back(objbuf);
     }
     
+    //ランダム飛行物体のテクスチャ
     for (int i = 0;i<TEXLIBLINE;i++){
         for(int j = 0;j<TEXLIBNUM;j++){
             ofImage bufimage;
@@ -119,6 +120,7 @@ void ofApp::setup(){
         }
     }
     
+    //応援コメント
     for (int i = 0; i < 3 ;i++){
         for(int j = 0;j < 2; j++){
             for(int k =0; k < 2; k++){
@@ -149,7 +151,6 @@ void ofApp::setup(){
     vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
     
     // load the shader
-    
     
     //道路
     shader2.setGeometryInputType(GL_LINES);
@@ -304,7 +305,10 @@ void ofApp::update(){
         }
         ObjHumans[i].update();
     }
-    objRoad.update();
+    
+    if(cameraMode==2){
+        objRoad.update();
+    }
     
     //ケチャ
     /*for (vector<KetyaBall>::iterator it=Ketyas.begin(); it!=Ketyas.end(); ++it) {
@@ -342,28 +346,118 @@ void ofApp::update(){
         preHaikei=currentHaikei;
     }
     
-    //---------------------------------------------
-    //    時間制御
-    //---------------------------------------------
-    if(timer < 70942){     //1番
-        texlibnum=0;
-        objectPct=20;
-    }else if(timer < 101119){   //1サビ
-        texlibnum=1;
-        objectPct=30;
-    }else if(timer < 139857){   //2番
-        texlibnum=1;
-        objectPct=20;
-    }else if(timer < 194000){   //よいよい・ケチャ
-        texlibnum=2;
-        objectPct=25;
-    }else if (timer < 224000){
-        texlibnum=2;            //ラスト
-        objectPct=40;
-        bRainbow = true;
-    }else{
-    }
+
     if(timeline.isPlaying()){
+        timer = timer *10;
+        //timer = timer *3;
+        //---------------------------------------------
+        //    時間制御
+        //---------------------------------------------
+        if(timer < 70942){//1番
+            if(timer < 21096){//説明画面中
+                sceneId = 1;
+                cameraId = 1;
+                if(!cameraModeForce)cameraMode=2;
+            }
+            else if(timer < 29373){//ぐるぐる
+                sceneId = 12;
+                cameraId = 5;//ぐるぐるアングル
+                if(!cameraModeForce)cameraMode=2;
+            }
+            else if(timer < 31797){//止まってスタート
+                sceneId = 13;
+                cameraId = 1;//ストップアングル
+                if(!cameraModeForce)cameraMode=2;
+            }else{//１Aメロの間は上昇
+                sceneId = 14;
+                cameraId = 1;
+                if(!cameraModeForce)cameraMode=2;
+            }
+            texlibnum=0;
+            objectPct=20;
+        }else if(timer < 101119){   //1サビ
+            sceneId = 2;
+            texlibnum=1;
+            objectPct=30;
+        }else if(timer < 139680){   //2番
+            sceneId = 3;
+            texlibnum=1;
+            objectPct=20;
+        }else if(timer < 169783){   //2番サビ
+            sceneId = 32;
+            texlibnum=1;
+            objectPct=20;
+        }else if(timer < 183629){   //よいよい
+            sceneId = 4;
+            texlibnum=2;
+            objectPct=25;
+        }else if(timer < 194000){   //ケチャ
+            sceneId = 42;
+            texlibnum=2;
+            objectPct=25;
+        }else if (timer < 224000){
+            sceneId = 5;
+            texlibnum=2;            //ラスト
+            objectPct=40;
+        }else{
+        }
+        if(sceneId!=sceneId_1f){
+            bsceneChange = true;
+            sceneId_1f = sceneId;
+        }
+        if(bsceneChange){//シーンが変わった瞬間だけ立つ
+            switch (sceneId) {
+                case 1:
+                    currentHaikei=6;
+                    countHaikei=1;
+                    break;
+                case 12:
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 13:
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 14:
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 2://1サビ
+                    currentHaikei=2;
+                    countHaikei=1;
+                    break;
+                case 3://２番
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 32://２番サビ
+                    currentHaikei=2;
+                    countHaikei=1;
+                    break;
+                case 4://よいよい
+                    currentHaikei=3;
+                    countHaikei=1;
+                    break;
+                case 42://ケチャ
+                    bKetya = true;
+                    currentHaikei=4;
+                    countHaikei=1;
+                    break;
+                case 5://ラスト
+                    bKetya = false;
+                    bRainbow = true;
+                    currentHaikei=5;
+                    countHaikei=1;
+                    break;
+                case 6:
+                    break;
+                default:
+                    break;
+            }
+            bsceneChange=false;
+        }
+        
         if(ofRandom(0, 100)<objectPct){
             ObjSimple objbuf;
             int id = ((int)ofRandom(0, 10)%10)+1;
@@ -401,7 +495,24 @@ void ofApp::draw3d(){
     //カメラ設定
     int cx,cy;
     cameraCount++;
-    cameraMoving = ofVec3f(0,objRoad.count*objRoad.speed,0);
+    switch(cameraMode){
+        case 0:
+            break;
+        case 1:
+            //if(bcameradown){
+            //    cameraZpos = -300;
+            //    bcameradown=false;
+            //}
+            //if(cameraZpos<0 && cameraZpos>-20){
+            //}else{
+            cameraZpos += 100;
+            //}
+            cameraMoving = ofVec3f(0,objRoad.count*objRoad.speed,cameraZpos);
+            break;
+        case 2:
+            cameraMoving = ofVec3f(0,objRoad.count*objRoad.speed,0);
+            break;
+    }
     camera2.setPosition(camera.getPosition()+cameraMoving);
     camera2.lookAt(cameraMoving,ofVec3f(0,0,1));
     
@@ -426,9 +537,9 @@ void ofApp::draw3d(){
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 5:
-            cx = -1200*cos( cameraCount/100.0 )*(cos(cameraCount/100.0)+2)/3;
-            cy = 1200*sin( cameraCount/100.0 )*(cos(cameraCount/100.0)+2)/3;
-            camera.setPosition(cx, cy, 400*(cos(cameraCount/100.0)+2)/3);
+            cx = -1200*cos( cameraCount/20.0 )*(cos(cameraCount/20.0)+2)/3;
+            cy = 1200*sin( cameraCount/20.0 )*(cos(cameraCount/20.0)+2)/3;
+            camera.setPosition(cx, cy, 400*(cos(cameraCount/20.0)+2)/3);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         default:
@@ -437,7 +548,7 @@ void ofApp::draw3d(){
     
     glDepthMask(GL_FALSE);//デプスバッファに書き込むのを禁止する
     
-    ofEnableBlendMode(OF_BLENDMODE_ADD);//加算描画 this makes everything look glowy
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);//加算描画 this makes everything look glowy
     ofEnablePointSprites();
     
     //道路表示
@@ -452,23 +563,12 @@ void ofApp::draw3d(){
         if(bRainbow){
             ofSetColor(rainbow[(i/10)%7][0],rainbow[(i/10)%7][1],rainbow[(i/10)%7][2],bufpos.w);    //虹色
         }else{
-            ofSetColor(0,200,0,bufpos.w);
+            ofSetColor((int)roadColorNow.x,(int)roadColorNow.y,(int)roadColorNow.z,((int)(bufpos.w*roadAlphaNow)>>8));
         }
         ofBoxPrimitive buf_box;
         buf_box = ofBoxPrimitive(roadwidth, objRoad.width, 1);
         buf_box.setPosition(bufpos_1f.x, bufpos_1f.y+objRoad.width/2, bufpos.z);
         buf_box.draw();
-        if(i%20==0){
-            ofSetColor(255,0,0,255);
-            ofSpherePrimitive a;
-            a = ofSpherePrimitive(10, 20);
-            a.setPosition(bufpos_1f.x, bufpos_1f.y, 0);
-            a.draw();
-            ofBoxPrimitive b;
-            b = ofBoxPrimitive(roadwidth, 3, 20);
-            b.setPosition(bufpos_1f.x, bufpos_1f.y, bufpos.z);
-            b.draw();
-        }
         bufpos_1f = bufpos;
     }
     camera2.end();
@@ -503,6 +603,9 @@ void ofApp::draw3d(){
         }
     }
     glDepthMask(GL_FALSE);
+
+    
+    
     
     // this makes everything look glowy :)
     ofEnablePointSprites();
@@ -526,34 +629,48 @@ void ofApp::draw3d(){
     vbo.draw(GL_POINTS, 0,(int)points2.size());
     texture.unbind();
     //ケチャ
-    texture.bind();
-    //ofSetColor(230, 230, 255);
-    vector<ofVec3f> sizebuf;
-    vector<ofVec3f> posbuf;
-    vector<ofFloatColor> colorbuf;
-    for(int i = 0;i<Ketyas_billboard.size();i++){
-        posbuf = Ketyas_billboard[i].getpos();
-        sizebuf = Ketyas_billboard[i].getsize();
-        colorbuf = Ketyas_billboard[i].getcolor();
-        total = (int)sizebuf.size();
-        vbo.setVertexData(&posbuf[0], total, GL_STATIC_DRAW);
-        vbo.setNormalData(&sizebuf[0], total, GL_STATIC_DRAW);
-        vbo.setColorData(&colorbuf[0], total, GL_STATIC_DRAW);
-        vbo.draw(GL_POINTS, 0,(int)posbuf.size());
+    if(bKetya){
+        texture.bind();
+        //ofSetColor(230, 230, 255);
+        vector<ofVec3f> sizebuf;
+        vector<ofVec3f> posbuf;
+        vector<ofFloatColor> colorbuf;
+        for(int i = 0;i<Ketyas_billboard.size();i++){
+            posbuf = Ketyas_billboard[i].getpos();
+            sizebuf = Ketyas_billboard[i].getsize();
+            colorbuf = Ketyas_billboard[i].getcolor();
+            total = (int)sizebuf.size();
+            vbo.setVertexData(&posbuf[0], total, GL_STATIC_DRAW);
+            vbo.setNormalData(&sizebuf[0], total, GL_STATIC_DRAW);
+            vbo.setColorData(&colorbuf[0], total, GL_STATIC_DRAW);
+            vbo.draw(GL_POINTS, 0,(int)posbuf.size());
+        }
+        texture.unbind();
     }
-    texture.unbind();
-    
-    //ライブハウスグリッド描画
-    objFrame.draw();
-    
     camera.end();
     shader.end();
-    
     ofDisablePointSprites();
     ofDisableBlendMode();
     ofDisableAlphaBlending();
 
     
+    //ライブハウスグリッド描画
+    camera.begin();
+    if(currentHaikei==6 || preHaikei==6){
+        if(currentHaikei == preHaikei){
+            ofSetColor(255);
+        }else if(currentHaikei==6){
+            ofSetColor((int)(255.0*countHaikei/countHaikeiMax));
+        }else{
+            ofSetColor((int)(255.0*(countHaikeiMax-countHaikei)/countHaikeiMax));
+        }
+    }else{
+        ofSetColor(0);
+    }
+    objFrame.draw();
+    camera.end();
+
+
     //基準座標
     camera2.begin();
     ofSetLineWidth(1);
@@ -564,7 +681,6 @@ void ofApp::draw3d(){
      ofLine(ofVec3f(0,0,0), ofVec3f(0,300,0));
      ofSetColor(0,0,255);
      ofLine(ofVec3f(0,0,0), ofVec3f(0,0,300));*/
-    
     //ここから松
     //    ofEnableAlphaBlending();
     //    // bind the shader so that wee can change the
@@ -597,6 +713,7 @@ void ofApp::draw3d(){
         }
     }
     
+    //飛んでくるオブジェクト
     for(int i =0 ;i< objLibs.size();i++){
         if(objLibs[i].visible(cameraMoving.y)){
             objLibs[i].draw(texLibs[objLibs[i].texidi*TEXLIBNUM+objLibs[i].texidj]);
@@ -612,7 +729,6 @@ void ofApp::draw3d(){
     //ここから応援コメント
     camera.begin();
     ofSetColor(255,255,255);
-    
     for (int i = 0; i < 3 ;i++){
         for(int j = 0;j < 2; j++){
             for(int k =0; k < 2; k++){
@@ -622,7 +738,6 @@ void ofApp::draw3d(){
             }
         }
     }
-    
     //ここからケチャ
     ofEnableAlphaBlending();
     
@@ -631,19 +746,14 @@ void ofApp::draw3d(){
         it->draw();
     }
     KetyaParticle::img.unbind();*/
-    
-    
     /*texture.bind();
-
     for (int i=0;i<Ketyas_billboard.size();i++){
         Ketyas_billboard[i].draw();
     }
     texture.unbind();*/
-
     
     ofDisableAlphaBlending();
     camera.end();
-    
     
     glDepthMask(GL_TRUE);
 }
@@ -663,24 +773,38 @@ void ofApp::draw(){
         return;
     }
 
-    //背景表示
+    //背景表示、　同時に道路の色も決定する
     ofSetColor(255,255,255,255);
     if(currentHaikei==preHaikei && currentHaikei>0){
         ofEnableAlphaBlending();
         haikei[currentHaikei-1].draw(240,0);
         ofDisableAlphaBlending();
+        //道路の色
+        roadColorNow = ofVec3f(roadColor[currentHaikei][0],roadColor[currentHaikei][1],roadColor[currentHaikei][2]);
+        roadAlphaNow = roadAlpha[currentHaikei];
     }else{
-        if(currentHaikei < 6 && currentHaikei>0){
+        if(currentHaikei < 7 && currentHaikei>0){
+            ofEnableBlendMode(OF_BLENDMODE_ALPHA);
             ofEnableAlphaBlending();
             haikei[preHaikei-1].draw(240,0);
             ofSetColor(255,255,255,(int)(255.0*countHaikei/countHaikeiMax));
             haikei[currentHaikei-1].draw(240,0);
             ofDisableAlphaBlending();
+            ofDisableBlendMode();
+            //道路の色
+            ofVec3f bufa,bufb;
+            bufb = ofVec3f(roadColor[preHaikei][0],roadColor[preHaikei][1],roadColor[preHaikei][2]);
+            bufa = ofVec3f(roadColor[currentHaikei][0],roadColor[currentHaikei][1],roadColor[currentHaikei][2]);
+            roadColorNow = (bufa * countHaikei + bufb * (countHaikeiMax-countHaikei))/countHaikeiMax;
+            roadAlphaNow = (int)((roadAlpha[currentHaikei] * countHaikei + roadAlpha[preHaikei] * (countHaikeiMax-countHaikei))/countHaikeiMax);
         }
     }
     
-    
-    
+    if(currentSlide>=4){
+        ofSetColor(255);
+        timeline.draw(240, 0);
+    }
+        
     //ここから3D CG
     draw3d();
     //ここまで3D CG
@@ -690,10 +814,6 @@ void ofApp::draw(){
     //    ofRect(0, 0, ofGetWidth(), judgeLine_yoko*2);
     
     //タイムライン描画
-    if(currentSlide>=4){
-        ofSetColor(255);
-        timeline.draw(240, 0);
-    }
     
     //    if(timelineMethod<=1){
     //    ofSetLineWidth(2);
@@ -799,6 +919,8 @@ void ofApp::draw(){
     info += "\ntimer: "+ofToString(timer)+" ms";
     info += "\nParticle Matsu: "+ofToString(NUM_BILLBOARDS);
     info += "\nTexture LineID: "+ofToString(texlibnum);
+    info += "\nHaikei: "+ofToString(currentHaikei)+":"+ofToString(countHaikei);
+    info += "\nScene: "+ofToString(sceneId)+":"+ofToString(sceneId_1f);
     
     
     //両側の黒部分
@@ -885,6 +1007,14 @@ void ofApp::keyPressed(int key){
     }
     else if(key == OF_KEY_RIGHT){       //左右でスライド切り替え
         currentSlide++;
+        if(currentSlide>=4 && currentSlide <= 7){
+            if(currentSlide==4){
+                currentHaikei=6;
+                countHaikei=countHaikeiMax-1;
+                cameraId = 1;
+            }
+            sceneId = 1;
+        }
     }
     else if(key == OF_KEY_LEFT){
         currentSlide--;
@@ -1011,7 +1141,7 @@ void ofApp::keyPressed(int key){
     }
     else if(key == '-'){
         //変わりきる前にコマンド押すと背景がパカッて変わるので背景が全部変わってから次の背景チェンジを行うこと
-        if(currentHaikei<5){
+        if(currentHaikei<6){
             currentHaikei++;
             countHaikei=1;
         }
@@ -1024,6 +1154,13 @@ void ofApp::keyPressed(int key){
     }
     else if(key == '0'){
         currentHaikei=0;
+    }
+    else if(key == '@'){
+        if(cameraMode<2){
+            cameraMode++;
+        }else{
+            cameraMode=0;
+        }
     }
     
 }
