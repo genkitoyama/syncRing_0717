@@ -298,5 +298,7 @@ public:
     ofSoundPlayer myClearSound;
     ofSoundPlayer mySnareSound;
     
+    int scoreOffSet;
+    
     vector<Firework> fs;
 };

@@ -397,7 +397,6 @@ void ofApp::update(){
     }else{
         preHaikei=currentHaikei;
     }
-    
 
     if(timeline.isPlaying()){
         timer = timer *30;
@@ -1091,6 +1090,9 @@ void ofApp::draw(){
     //ofSetColor(255);
     if(sizes.size() || sizes2.size()){
         syncScoreBuf = (int)(sizes.size()*100/(sizes.size()+sizes2.size()));
+        syncScoreBuf+=scoreOffSet;//魔法のオフセット
+        if(syncScoreBuf>100)syncScoreBuf=100;
+        if(syncScoreBuf<0)syncScoreBuf=0;
         if(velx_ave*velx_ave+vely_ave*vely_ave > scorespeedthr){
             syncScore = syncScoreBuf;
             syncScoreMoving++;
@@ -1172,9 +1174,12 @@ void ofApp::draw(){
         float histwidth;
         ofEnableAlphaBlending();
         ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        ofSetColor(255,255,255,160);
-        haikei[5].draw(240,0);
-        seiseki1.draw(1350, 600, 70, 70);//回
+        ofSetColor(255,255,255,200);
+        //haikei[5].draw(240,0);
+        ofFill();
+        ofRect(0,0,ofGetWidth(),ofGetHeight());
+        ofSetColor(255,255,255,255);
+        seiseki1.draw(1200, 600, 90, 90);//回
         seiseki2.draw(300, 500, 430, 195);//
         ofSetLineWidth(25);
         if(countHappyou>30 && (scoreLog.size()>0)){
@@ -1182,7 +1187,7 @@ void ofApp::draw(){
                 mySnareSound.play();
                 timeline.stop();
             }
-            if(countHappyou==151){
+            if(countHappyou==181){
                 myClearSound.play();
                 mySnareSound.stop();
             }
@@ -1195,24 +1200,20 @@ void ofApp::draw(){
             for(int i =0;i<happyounum;i++){
                 if(i==0)continue;
                 c.setHsb(255*i/scoreLog.size(), 255, 255);
-                ofSetColor((int)c.r,(int)c.g,(int)c.b,128);
-                ofLine((int)(280+i*histwidth),2000-19*scoreLog[i-1],(int)(280+(i+1)*histwidth),2000-19*scoreLog[i]);
+                ofSetColor((int)c.r,(int)c.g,(int)c.b,255);
+                ofLine((int)(280+i*histwidth),500-4*scoreLog[i-1],(int)(280+(i+1)*histwidth),500-4*scoreLog[i]);
             }
-            font.drawString(ofToString(scoreLog[happyounum]),800,300);
-            if(scoreLog[happyounum]==100){
-                font2.drawString("%",1350,300);
-            }else{
-                font2.drawString("%",1350,300);
-            }
-            if(countHappyou-30 <= scoreLog.size()){
+            if(happyounum!=(scoreLog.size()-1)){
+                font.drawString(ofToString(scoreLog[happyounum]),780,300);
+                font2.drawString("%",1150,300);
+            }if(countHappyou-30 <= scoreLog.size()){
                 if(scoreLog[happyounum]==100){
                     count100p++;
                 }
             }
-            font.drawString(ofToString(count100p),800,750);
+            font.drawString(ofToString(count100p),780,750);
         }
         ofDisableAlphaBlending();
-        
     }
 }
 
@@ -1225,22 +1226,13 @@ void ofApp::keyPressed(int key){
         bHideInfo = !bHideInfo;
     }
     else if(key == 'z'){
-        Obj o;
-        o.setDrawMethod(timelineMethod);
-        o.setup4(ofVec2f(ofGetWidth(),judgeLine_yoko), objVelocity);
-        Objects4.push_back(o);
+        scoreOffSet++;
     }
     else if(key == 'x'){
-        Obj o;
-        o.setDrawMethod(timelineMethod);
-        o.setup2(ofVec2f(ofGetWidth(),judgeLine_yoko), objVelocity);
-        Objects2.push_back(o);
+        scoreOffSet--;
     }
     else if(key == 'c'){
-        Obj o;
-        o.setDrawMethod(timelineMethod);
-        o.setup3(ofVec2f(ofGetWidth(),judgeLine_yoko), objVelocity);
-        Objects3.push_back(o);
+        scoreOffSet=0;
     }
     
     /*else if(key == 'p'){
