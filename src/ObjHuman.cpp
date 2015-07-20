@@ -262,7 +262,7 @@ void ObjSimple::drawYoko(ofImage tex){
     ofPlanePrimitive ba;
     ba.set(width,height);
     ofTranslate(x,y,z);
-    //ofRotateX(-90);
+    ofRotateX(-180);
     ba.setPosition(0,0,0);
     ba.setResolution(3,3);
     ba.draw();

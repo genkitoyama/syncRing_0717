@@ -88,7 +88,7 @@ void ofApp::setup(){
     sakura.play();
     sakura.setPaused(true);
     
-    texGameStart.loadImage("tex/start_02.png");
+    texGameStart.loadImage("tex/start_01.png");
     texZukkyun.loadImage("tex/zukkyun.png");
     texNainai.loadImage("tex/nainai.png");
     texHajimaruyo.loadImage("tex/hajimaruyo.png");
@@ -426,7 +426,7 @@ void ofApp::update(){
 
     if(timeline.isPlaying()){
         //timer = timer *30;
-        timer = timer *3;
+        //timer = timer *3;
         //---------------------------------------------
         //    時間制御
         //---------------------------------------------
@@ -1039,7 +1039,7 @@ void ofApp::draw3d(){
         for(int j = 0;j < 2; j++){
             for(int k =0; k < 2; k++){
                 if(commentdraw[i][j][k]){
-                    objTexts[i*4+j*2+k].draw(texTexts[i*4+j*2+k]);
+                    objTexts[i*4+j*2+k].drawYoko(texTexts[i*4+j*2+k]);
                 }
             }
         }
