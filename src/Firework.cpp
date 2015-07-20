@@ -48,10 +48,10 @@ void Firework::draw(){
 }
 
 void Firework::launch(){
-    x = oldX = ofGetMouseX() + ((ofRandom(5)*10) - 25);
-    y = oldY = ofGetHeight();
-    targetX = ofGetMouseX()+ofRandomf()*300;
-    targetY = ofGetMouseY()+ofRandomf()*200;
+    x = oldX = ofGetWidth()/2 + ((ofRandom(5)*10) - 25);
+    y = oldY = ofGetHeight()/2;
+    targetX = ofGetWidth()/2+ofRandomf()*300;
+    targetY = ofGetHeight()/2+ofRandomf()*300;
     ySpeed = ofRandom(3) + 2;
 //    flare = ofColor(ofRandom(2)*100+55,ofRandom(2)*100+55,ofRandom(2)*100+55);
     flareAmount = 30;

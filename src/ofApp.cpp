@@ -6,8 +6,8 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     ofSetCircleResolution(32);
     
-    ofSetWindowPosition(1921, 0);
-    ofSetFullscreen(true);
+    //ofSetWindowPosition(1921, 0);
+    //ofSetFullscreen(true);
     
     img.loadImage("sora.jpg");
     
@@ -89,7 +89,7 @@ void ofApp::setup(){
     sakura.play();
     sakura.setPaused(true);
     
-    texGameStart.loadImage("tex/gamestart.png");
+    texGameStart.loadImage("tex/start_02.png");
     texZukkyun.loadImage("tex/zukkyun.png");
     texNainai.loadImage("tex/nainai.png");
     texHajimaruyo.loadImage("tex/hajimaruyo.png");
@@ -98,6 +98,7 @@ void ofApp::setup(){
     texYoiyoi.loadImage("tex/yoiyoi.png");
     texDodon.loadImage("tex/dodon.png");
     texZokkon.loadImage("tex/zokkon.png");
+    texBakkyun.loadImage("tex/bakkyun.png");
     
     //2D関連
     bDraw2d = false;
@@ -155,7 +156,7 @@ void ofApp::setup(){
             for(int k =0; k < 2; k++){
                 ofImage bufimage;
                 char bufchar2[40] = "";
-                strcat(bufchar2,"textures/");
+                strcat(bufchar2,"textures/hyouka");
                 strcat(bufchar2,texlib2[i]);
                 strcat(bufchar2,texlib3[j]);
                 strcat(bufchar2,texlib4[k]);
@@ -168,7 +169,7 @@ void ofApp::setup(){
                 buf_x = ((commentxpos[i] - objFrameOffsetx)*scalex)>>5; //32等倍
                 buf_y = ((commentypos[j] - objFrameOffsety)*scaley)>>5; //32等倍
                 buf_z = (300 * scalez) >>5;//32等倍
-                objbuf2.setup(200, 200, buf_x, buf_y, buf_z);
+                objbuf2.setup(300, 300, buf_x, buf_y, buf_z);
                 objTexts.push_back(objbuf2);
             }
         }
@@ -373,6 +374,14 @@ void ofApp::update(){
         bPausedSakura=false;
     }
     
+    for (int i = 0; i < fs.size(); i++){
+        if((fs[i].hidden)&&(!fs[i].once)){
+            fs[i].launch();
+        }else if((fs[i].hidden)&&(fs[i].once)){
+            fs.erase(fs.begin()+i);
+        }
+    }
+    
     //松
     for (int i=0; i<NUM_BILLBOARDS; i++) {
         billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
@@ -404,7 +413,7 @@ void ofApp::update(){
         //---------------------------------------------
         //    時間制御
         //---------------------------------------------
-        if(timer < 70942){//1番
+        if(timer < 57000){//1Aまで
             if(timer < 21096){//説明画面中
                 sceneId = 1;
                 cameraId = 1;
@@ -456,11 +465,14 @@ void ofApp::update(){
                 }
                 
             }
+        }else if(timer < 70942){     //1B
+            bShowScore=false;
         }else if(timer < 101119){   //1サビ
+            bShowScore = true;
             sceneId = 2;
             texlibnum=1;
             objectPct=30;
-        }else if(timer < 139680){   //2番
+        }else if(timer < 125878){   //2番
             sceneId = 3;
             texlibnum=1;
             objectPct=20;
@@ -483,7 +495,10 @@ void ofApp::update(){
                 bBakkyun = false;
             }
             
+        }else if(timer < 139680){   //2B
+            bShowScore = false;
         }else if(timer < 169783){   //2番サビ
+            bShowScore = true;
             sceneId = 32;
             texlibnum=1;
             objectPct=30;
@@ -491,11 +506,43 @@ void ofApp::update(){
             sceneId = 4;
             texlibnum=2;
             objectPct=20;
+            
+            if(timer < 173621){
+                if(timer < 171741){
+                    bYoiyoi=true;
+                    bDodon = false;
+                }else{
+                    bYoiyoi = false;
+                    bDodon = true;
+                }
+            }else if (timer<177029){
+                if(timer < 175156){
+                    bYoiyoi = true;
+                    bDodon = false;
+                }else{
+                    bYoiyoi = false;
+                    bDodon = true;
+                }
+            }else if(timer < 179909){
+                if(timer < 178619){
+                    bYoiyoi = true;
+                    bDodon = false;
+                }else{
+                    bYoiyoi=false;
+                    bDodon = true;
+                }
+            }else{
+                bYoiyoi = false;
+                bDodon = false;
+            }
+            
         }else if(timer < 194000){   //ケチャ
             sceneId = 42;
             texlibnum=2;
             objectPct=0;
+            bShowScore = false;
         }else if (timer < 224000){
+            bShowScore = true;
             sceneId = 5;
             texlibnum=2;            //ラスト
             objectPct=35;
@@ -1075,11 +1122,6 @@ void ofApp::draw(){
         }
     }
     
-    //花火
-    for (int i = 0; i < fs.size(); i++){
-        fs[i].draw();
-    }
-    
     ofEnableAlphaBlending();
     if(bZukkyun){
         texZukkyun.draw(240, 0);
@@ -1092,7 +1134,7 @@ void ofApp::draw(){
     }else if(bDokkyun){
         texDokkyun.draw(240, 0);
     }else if(bGameStart){
-        texGameStart.draw(240, 0);
+        texGameStart.draw(ofGetWidth()/2, ofGetHeight()*3/4);
     }else if(bHajimaruyo){
         texHajimaruyo.draw(240, 0);
     }else if(bBakkyun){
@@ -1205,6 +1247,17 @@ void ofApp::draw(){
             if(countHappyou==181){
                 myClearSound.play();
                 mySnareSound.stop();
+                
+                for(int i=0;i<20;i++){
+                    Firework f;
+                    f.setup((int)ofRandom(7));
+                    fs.push_back(f);
+                }
+                for(int i=0;i<20;i++){
+                    Firework f;
+                    f.setup((int)ofRandom(7));
+                    fs.push_back(f);
+                }
             }
             happyounum=MIN((int)((countHappyou-30)),scoreLog.size()-1);
             histwidth = (900.0/scoreLog.size());
@@ -1230,6 +1283,12 @@ void ofApp::draw(){
         }
         ofDisableAlphaBlending();
     }
+    
+    //花火
+    for (int i = 0; i < fs.size(); i++){
+        fs[i].draw();
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -1248,6 +1307,9 @@ void ofApp::keyPressed(int key){
     }
     else if(key == 'c'){
         scoreOffSet=0;
+    }
+    else if(key == 'v'){
+        scoreOffSet=100;
     }
     
     /*else if(key == 'p'){
@@ -1370,9 +1432,9 @@ void ofApp::keyPressed(int key){
         //        }
         
         timeline.setPaused(true);       //曲ストップ
-        timeline.setPosition(0.0);      //最初に戻る
-        timeline.play();
-        timeline.setPaused(true);
+//        timeline.setPosition(0.0);      //最初に戻る
+//        timeline.play();
+//        timeline.setPaused(true);
     }
     else if(key == 'q'){
         texflag = 1;
