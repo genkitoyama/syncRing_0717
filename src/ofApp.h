@@ -301,4 +301,6 @@ public:
     int scoreOffSet;
     
     vector<Firework> fs;
+    
+    bool bShowScore = true;
 };
