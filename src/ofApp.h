@@ -166,6 +166,9 @@ public:
     int cameraMode = 0;//上に行くか1 前に進むか2 止まるか0
     int bcameradown = false;//上昇するカメラを下に下げる
     
+    bool bcameraRandom = false;
+    int cameraRandom = 0;
+    
     // 鳥居logo
     ofImage texTorii;
     ObjSimple objTorii;

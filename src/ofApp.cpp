@@ -399,7 +399,7 @@ void ofApp::update(){
     }
 
     if(timeline.isPlaying()){
-        timer = timer *30;
+        //timer = timer *30;
         //timer = timer *3;
         //---------------------------------------------
         //    時間制御
@@ -418,12 +418,11 @@ void ofApp::update(){
                 if(!cameraModeForce)cameraMode=2;
                 objectPct=20;
                 
-                if(timer > 21500 && timer < 24500){     //はじまるよ
+                if(timer > 21500 && timer < 24500){//はじまるよ
                     bHajimaruyo = true;
                 }else{
                     bHajimaruyo = false;
                 }
-                
             }
             else if(timer < 31797){//止まってスタート
                 bGameStart = true;
@@ -538,31 +537,39 @@ void ofApp::update(){
                     countHaikei=1;
                     break;
                 case 2://1サビ
+                    bcameraRandom = true;
                     bKetya = false;
                     currentHaikei=2;
                     countHaikei=1;
                     break;
                 case 3://２番
+                    bcameraRandom = false;
+                    cameraId = 1;
                     bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
                     break;
                 case 32://２番サビ
+                    bcameraRandom = true;
                     bKetya = false;
                     currentHaikei=2;
                     countHaikei=1;
                     break;
                 case 4://よいよい
+                    bcameraRandom = false;
+                    cameraId = 4;
                     bKetya = false;
                     currentHaikei=3;
                     countHaikei=1;
                     break;
                 case 42://ケチャ
+                    cameraId = 5;
                     bKetya = true;
                     currentHaikei=4;
                     countHaikei=1;
                     break;
                 case 5://ラスト
+                    bcameraRandom = true;
                     bKetya = false;
                     bRainbow = true;
                     currentHaikei=5;
@@ -581,6 +588,13 @@ void ofApp::update(){
                     break;
             }
             bsceneChange=false;
+        }
+        if(bcameraRandom){
+            cameraRandom++;
+            if(cameraRandom%120==0){
+                cameraRandom=0;
+                cameraId = (int)ofRandom(1,10.9);
+            }
         }
         
         if(ofRandom(0, 100)<objectPct){
@@ -692,12 +706,12 @@ void ofApp::draw3d(){
             camera.setPosition(cx, cy, 400*(cos(cameraCount/40.0)+2)/3);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
-        case 11:
+        /*case 11:
             cx = 0;
             cy = -1200+cameraCount*30;
             camera.setPosition(cx, cy, 200);
-            camera.lookAt(ofVec3f(0,cy+200,0),ofVec3f(0,0,1));
-            break;
+            camera.lookAt(ofVec3f(0,4000,200),ofVec3f(0,0,1));
+            break;*/
         default:
             break;
     }
@@ -744,7 +758,8 @@ void ofApp::draw3d(){
             buf_y = ObjHumans[i].position.y;
             buf_y = ((buf_y - 512 - objFrameOffsety)*scaley)>>5; //32等倍
             buf_z = (ObjHumans[i].positionz * scalez) >>5;//32等倍
-            buf_speed = (int)(ObjHumans[i].speed*humanscale/50+humansizeoffset);
+            //buf_speed = (int)(ObjHumans[i].speed*humanscale/50+humansizeoffset);
+            buf_speed = (int)(humanscale/50+humansizeoffset);
             if(ObjHumans[i].humanStd <= ObjHumans[i].objMissThr){
                 
                 if(ObjHumans[i].humanStd>=0){
@@ -1263,14 +1278,16 @@ void ofApp::keyPressed(int key){
      score = 0;
      }*/
     else if(key == OF_KEY_UP){
-        if(texlibnum<3){
-            texlibnum++;
-        }
+        //if(texlibnum<3){
+        //    texlibnum++;
+        //}
+        missThr++;
     }
     else if(key == OF_KEY_DOWN){
-        if(texlibnum>0){
-            texlibnum--;
-        }
+        //if(texlibnum>0){
+        //    texlibnum--;
+        //}
+        missThr--;
     }
     else if(key == OF_KEY_RIGHT){       //左右でスライド切り替え
         currentSlide++;
