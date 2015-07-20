@@ -6,8 +6,8 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     ofSetCircleResolution(32);
     
-    ofSetWindowPosition(1921, 0);
-    ofSetFullscreen(true);
+    //ofSetWindowPosition(1921, 0);
+    //ofSetFullscreen(true);
     
     img.loadImage("sora.jpg");
     
@@ -98,6 +98,17 @@ void ofApp::setup(){
     texDodon.loadImage("tex/dodon.png");
     texZokkon.loadImage("tex/zokkon.png");
     texBakkyun.loadImage("tex/bakkyun.png");
+    
+    posGameStart = ofPoint(240,0);
+    posZukkyun = ofPoint(240,0);
+    posNainai = ofPoint(240,200);
+    posHajimaruyo = ofPoint(240,0);
+    posKawaii = ofPoint(240,0);
+    posDokkyun = ofPoint(240,0);
+    posYoiyoi = ofPoint(240,0);
+    posDodon = ofPoint(240,0);
+    posZokkon = ofPoint(240,0);
+    posBakkyun = ofPoint(240,0);
     
     //2D関連
     bDraw2d = false;
@@ -191,28 +202,28 @@ void ofApp::setup(){
     //-----------------------------------------------------------------
     //    松を500個ほど配置
     //
-    billboards.getVertices().resize(NUM_BILLBOARDS);
-    billboards.getColors().resize(NUM_BILLBOARDS);
-    billboards.getNormals().resize(NUM_BILLBOARDS,ofVec3f(0));
-    
-    // ------------------------- billboard particles
-    for (int i=0; i<NUM_BILLBOARDS; i++) {
-        billboardVels[i].set(ofRandomf(), -1.0, ofRandomf());
-        billboards.getVertices()[i].set(ofRandom(-800, 800),
-                                        ofRandom(0, 100000),
-                                        ofRandom(-500, 500));
-        //billboards.getColors()[i].set(ofColor(255));
-        //billboards.getColors()[i].set(ofColor::fromHsb(160, 255, 255));
-        billboardSizeTarget[i] = ofRandom(64, 128);
-    }
-    billboards.setUsage( GL_DYNAMIC_DRAW );
-    billboards.setMode(OF_PRIMITIVE_POINTS);
-    billboardShader.load("shadersGL2/Billboard");
-    
-    // we need to disable ARB textures in order to use normalized texcoords
-    //ofDisableArbTex();
-    texture_.loadImage("textures/matsu.png");
-    ofEnableAlphaBlending();
+//    billboards.getVertices().resize(NUM_BILLBOARDS);
+//    billboards.getColors().resize(NUM_BILLBOARDS);
+//    billboards.getNormals().resize(NUM_BILLBOARDS,ofVec3f(0));
+//    
+//    // ------------------------- billboard particles
+//    for (int i=0; i<NUM_BILLBOARDS; i++) {
+//        billboardVels[i].set(ofRandomf(), -1.0, ofRandomf());
+//        billboards.getVertices()[i].set(ofRandom(-800, 800),
+//                                        ofRandom(0, 100000),
+//                                        ofRandom(-500, 500));
+//        //billboards.getColors()[i].set(ofColor(255));
+//        //billboards.getColors()[i].set(ofColor::fromHsb(160, 255, 255));
+//        billboardSizeTarget[i] = ofRandom(64, 128);
+//    }
+//    billboards.setUsage( GL_DYNAMIC_DRAW );
+//    billboards.setMode(OF_PRIMITIVE_POINTS);
+//    billboardShader.load("shadersGL2/Billboard");
+//    
+//    // we need to disable ARB textures in order to use normalized texcoords
+//    //ofDisableArbTex();
+//    texture_.loadImage("textures/matsu.png");
+//    ofEnableAlphaBlending();
     //
     //
     //---------------------------------------------------------------------
@@ -361,8 +372,6 @@ void ofApp::update(){
 
     }
     
-    
-    
     timeline.update();
     timer = ofGetElapsedTimeMillis()-startTime;
     
@@ -380,10 +389,10 @@ void ofApp::update(){
         }
     }
     
-    //松
-    for (int i=0; i<NUM_BILLBOARDS; i++) {
-        billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
-    }
+//    //松
+//    for (int i=0; i<NUM_BILLBOARDS; i++) {
+//        billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
+//    }
     
     if(syncScore==100){
         for(int i=0;i<20;i++){
@@ -439,7 +448,7 @@ void ofApp::update(){
                     bHajimaruyo = false;
                 }
             }
-            else if(timer < 29552){//止まってスタート
+            else if(timer < 32064){//止まってスタート
                 bGameStart = true;
                 sceneId = 13;
                 cameraId = 1;//ストップアングル
@@ -478,7 +487,7 @@ void ofApp::update(){
             sceneId = 2;
             texlibnum=1;
             objectPct=30;
-        }else if(timer < 125878){   //2番
+        }else if(timer < 125878){   //2A
             sceneId = 3;
             texlibnum=1;
             objectPct=20;
@@ -659,6 +668,30 @@ void ofApp::update(){
             objLibs.push_back(objbuf);
         }
     }
+    
+    
+//    if(bZukkyun){
+//        texZukkyun.draw(240, 0);
+//    }else if (bNainai){
+//        texNainai.draw(240, 200);
+//    }else if(bKawaii){
+//        texKawaii.draw(240, 0);
+//    }else if(bZokkon){
+//        texZokkon.draw(240, 0);
+//    }else if(bDokkyun){
+//        texDokkyun.draw(240, 0);
+//    }else if(bGameStart){
+//        posGameStart.x += 20;
+//    }else if(bHajimaruyo){
+//        posHajimaruyo.y += 20;
+//    }else if(bBakkyun){
+//        texBakkyun.draw(240, 0);
+//    }else if(bYoiyoi){
+//        texYoiyoi.draw(240,0);
+//    }else if(bDodon){
+//        texDodon.draw(240, 0);
+//    }
+
 }
 
 //--------------------------------------------------------------
@@ -1131,28 +1164,27 @@ void ofApp::draw(){
     
     ofEnableAlphaBlending();
     if(bZukkyun){
-        texZukkyun.draw(240, 0);
+        texZukkyun.draw(posZukkyun);
     }else if (bNainai){
-        texNainai.draw(240, 200);
+        texNainai.draw(posNainai);
     }else if(bKawaii){
-        texKawaii.draw(240, 0);
+        texKawaii.draw(posKawaii);
     }else if(bZokkon){
-        texZokkon.draw(240, 0);
+        texZokkon.draw(posZokkon);
     }else if(bDokkyun){
-        texDokkyun.draw(240, 0);
+        texDokkyun.draw(posDokkyun);
     }else if(bGameStart){
-        texGameStart.draw(ofGetWidth()/2-400, ofGetHeight()*3/5);
+        texGameStart.draw(posGameStart);
     }else if(bHajimaruyo){
-        texHajimaruyo.draw(240, 0);
+        texHajimaruyo.draw(posHajimaruyo);
     }else if(bBakkyun){
-        texBakkyun.draw(240, 0);
+        texBakkyun.draw(posBakkyun);
     }else if(bYoiyoi){
-        texYoiyoi.draw(240,0);
+        texYoiyoi.draw(posYoiyoi);
     }else if(bDodon){
-        texDodon.draw(240, 0);
+        texDodon.draw(posDodon);
     }
     ofDisableAlphaBlending();
-
     
     //シンクロ率表示
     //ofSetColor(255);

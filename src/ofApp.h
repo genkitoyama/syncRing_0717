@@ -175,24 +175,34 @@ public:
     
     ofImage texGameStart;
     bool bGameStart = false;
+    ofPoint posGameStart;
     ofImage texZukkyun;
     bool bZukkyun = false;
+    ofPoint posZukkyun;
     ofImage texNainai;
     bool bNainai = false;
+    ofPoint posNainai;
     ofImage texHajimaruyo;
     bool bHajimaruyo = false;
+    ofPoint posHajimaruyo;
     ofImage texKawaii;
     bool bKawaii = false;
+    ofPoint posKawaii;
     ofImage texDokkyun;
     bool bDokkyun = false;
+    ofPoint posDokkyun;
     ofImage texYoiyoi;
     bool bYoiyoi = false;
+    ofPoint posYoiyoi;
     ofImage texDodon;
     bool bDodon = false;
+    ofPoint posDodon;
     ofImage texZokkon;
     bool bZokkon = false;
+    ofPoint posZokkon;
     ofImage texBakkyun;
     bool bBakkyun = false;
+    ofPoint posBakkyun;
     
     //ケチャ
     //vector<KetyaBall> Ketyas;
@@ -306,4 +316,6 @@ public:
     vector<Firework> fs;
     
     bool bShowScore = true;
+    
+    ofPoint pos;
 };
