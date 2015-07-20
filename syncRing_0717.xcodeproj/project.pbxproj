@@ -30,6 +30,7 @@
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		BF85BAC61B58F2CA005E5E6F /* Obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF85BAC21B58F2CA005E5E6F /* Obj.cpp */; };
 		BF85BAC71B58F2CA005E5E6F /* ObjHuman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF85BAC41B58F2CA005E5E6F /* ObjHuman.cpp */; };
+		BFAA6FFF1B5C5E0D00802944 /* Firework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAA6FFD1B5C5E0D00802944 /* Firework.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -127,6 +128,8 @@
 		BF85BAC31B58F2CA005E5E6F /* Obj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Obj.h; sourceTree = "<group>"; };
 		BF85BAC41B58F2CA005E5E6F /* ObjHuman.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjHuman.cpp; sourceTree = "<group>"; };
 		BF85BAC51B58F2CA005E5E6F /* ObjHuman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjHuman.h; sourceTree = "<group>"; };
+		BFAA6FFD1B5C5E0D00802944 /* Firework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Firework.cpp; sourceTree = "<group>"; };
+		BFAA6FFE1B5C5E0D00802944 /* Firework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Firework.h; sourceTree = "<group>"; };
 		C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscReceiver.cpp; path = ../../../addons/ofxOsc/src/ofxOscReceiver.cpp; sourceTree = SOURCE_ROOT; };
 		C58862C6D212C8E8A83810F4 /* ofxOscMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscMessage.h; path = ../../../addons/ofxOsc/src/ofxOscMessage.h; sourceTree = SOURCE_ROOT; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
@@ -374,6 +377,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				BFAA6FFD1B5C5E0D00802944 /* Firework.cpp */,
+				BFAA6FFE1B5C5E0D00802944 /* Firework.h */,
 				BF85BAC41B58F2CA005E5E6F /* ObjHuman.cpp */,
 				BF85BAC51B58F2CA005E5E6F /* ObjHuman.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
@@ -506,6 +511,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				BFAA6FFF1B5C5E0D00802944 /* Firework.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */,
 				BF85BAC71B58F2CA005E5E6F /* ObjHuman.cpp in Sources */,

@@ -4,18 +4,25 @@
 void ofApp::setup(){
     //ofSetVerticalSync(true);
     ofSetFrameRate(30);
-    ofSetCircleResolution(128);
+    ofSetCircleResolution(32);
     
     ofSetWindowPosition(1921, 0);
     ofSetFullscreen(true);
     
     img.loadImage("sora.jpg");
     
+    myClearSound.loadSound("clear.mp3"); //サウンドファイルの読込み
+    myClearSound.setLoop(false); //ループ再生をONに
+    myClearSound.setVolume(0.7);
+    
+    mySnareSound.loadSound("snareroll.mp3");
+    mySnareSound.setLoop(false);
+    mySnareSound.setVolume(0.7);
+    
     mySound.loadSound("../../../kirakirabgm.mp3"); //サウンドファイルの読込み
     mySound.setLoop(true); //ループ再生をONに
     mySound.setVolume(0.2);
     mySound.play(); //サウンド再生開始
-    
     
     for(int i=0;i<4;i++){
         char c1[32];
@@ -73,12 +80,24 @@ void ofApp::setup(){
     font.loadFont("parukana_herf.ttf", 300);
     font2.loadFont("parukana_herf.ttf", 150);
     //VALkana/valkana_standard.otf
-    
-    //timeline.loadMovie("../../../timeline_0716.mov");      //音あり
-    
-    timeline.loadMovie("tl_0716.mp4");              //音なし
+    timeline.loadMovie("../../../0720.mov");//音あり
+    //timeline.loadMovie("tl_0716.mp4");              //音なし
     timeline.play();
     timeline.setPaused(true);
+    
+    sakura.loadMovie("../../../sakura.mov");
+    sakura.play();
+    sakura.setPaused(true);
+    
+    texGameStart.loadImage("tex/gamestart.png");
+    texZukkyun.loadImage("tex/zukkyun.png");
+    texNainai.loadImage("tex/nainai.png");
+    texHajimaruyo.loadImage("tex/hajimaruyo.png");
+    texKawaii.loadImage("tex/kawaii.png");
+    texDokkyun.loadImage("tex/dokkyun.png");
+    texYoiyoi.loadImage("tex/yoiyoi.png");
+    texDodon.loadImage("tex/dodon.png");
+    texZokkon.loadImage("tex/zokkon.png");
     
     //2D関連
     bDraw2d = false;
@@ -200,8 +219,8 @@ void ofApp::setup(){
     //---------------------------------------------------------------------
     
     //成績発表テクスチャ
-    ofLoadImage(seiseki1,"textures/seiseki_kai.png");
-    ofLoadImage(seiseki2,"textures/seiseki_syncr.png");
+    seiseki1.loadImage("textures/seiseki_kai.png");
+    seiseki2.loadImage("textures/seiseki_syncr_new.png");
     
     
 }   //setupここまで
@@ -348,6 +367,12 @@ void ofApp::update(){
     timeline.update();
     timer = ofGetElapsedTimeMillis()-startTime;
     
+    sakura.update();
+    if(bPausedSakura){
+        sakura.setPaused(false);
+        bPausedSakura=false;
+    }
+    
     //松
     for (int i=0; i<NUM_BILLBOARDS; i++) {
         billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
@@ -383,21 +408,56 @@ void ofApp::update(){
         if(timer < 70942){//1番
             if(timer < 21096){//説明画面中
                 sceneId = 1;
+                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
+                texlibnum=0;
+                objectPct=0;
             }
             else if(timer < 29373){//ぐるぐる
                 sceneId = 12;
+                cameraId = 5;//ぐるぐるアングル
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
+                
+                if(timer > 21500 && timer < 24500){     //はじまるよ
+                    bHajimaruyo = true;
+                }else{
+                    bHajimaruyo = false;
+                }
+                
             }
             else if(timer < 31797){//止まってスタート
+                bGameStart = true;
                 sceneId = 13;
+                cameraId = 1;//ストップアングル
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
             }else{//１Aメロの間は上昇
+                bGameStart = false;
                 sceneId = 14;
+                cameraId = 1;
                 if(!cameraModeForce)cameraMode=2;
+                objectPct=20;
+                
+                if(timer > 34232 && timer < 35008){     //ずっきゅん
+                    bZukkyun = true;
+                }else{
+                    bZukkyun = false;
+                }
+                
+                if(timer > 41500 && timer < 43176){     //ないない
+                    bNainai = true;
+                }else{
+                    bNainai = false;
+                }
+                
+                if(timer > 45160 && timer < 46000){     //ドッキュン
+                    bDokkyun = true;
+                }else{
+                    bDokkyun = false;
+                }
+                
             }
-            texlibnum=0;
-            objectPct=20;
         }else if(timer < 101119){   //1サビ
             sceneId = 2;
             texlibnum=1;
@@ -406,22 +466,41 @@ void ofApp::update(){
             sceneId = 3;
             texlibnum=1;
             objectPct=20;
+            
+            if(timer > 103100 && timer < 103930){     //ぞっこん
+                bZokkon = true;
+            }else{
+                bZokkon = false;
+            }
+            
+            if(timer > 110210 && timer < 112091){     //かわいい
+                bKawaii = true;
+            }else{
+                bKawaii = false;
+            }
+            
+            if(timer > 114126 && timer < 114767){     //ばっきゅん
+                bBakkyun = true;
+            }else{
+                bBakkyun = false;
+            }
+            
         }else if(timer < 169783){   //2番サビ
             sceneId = 32;
             texlibnum=1;
-            objectPct=20;
-        }else if(timer < 183629){   //よいよい
+            objectPct=30;
+        }else if(timer < 182275){   //よいよい
             sceneId = 4;
             texlibnum=2;
-            objectPct=25;
+            objectPct=20;
         }else if(timer < 194000){   //ケチャ
             sceneId = 42;
             texlibnum=2;
-            objectPct=25;
+            objectPct=0;
         }else if (timer < 224000){
             sceneId = 5;
             texlibnum=2;            //ラスト
-            objectPct=40;
+            objectPct=35;
         }else if (timer < 230535){
             sceneId = 6;
         }else if (timer < 235535){
@@ -890,6 +969,12 @@ void ofApp::draw(){
         }
     }
     
+    //桜
+    if(currentHaikei == 5){
+        ofSetColor(255);
+        sakura.draw(240, 0);
+    }
+    
     if(currentSlide>=4){
         ofSetColor(255);
         timeline.draw(240, 0);
@@ -976,6 +1061,32 @@ void ofApp::draw(){
         }
     }
     
+    //花火
+    for (int i = 0; i < fs.size(); i++){
+        fs[i].draw();
+    }
+    
+    ofEnableAlphaBlending();
+    if(bZukkyun){
+        texZukkyun.draw(240, 0);
+    }else if (bNainai){
+        texNainai.draw(240, 0);
+    }else if(bKawaii){
+        texKawaii.draw(240, 0);
+    }else if(bZokkon){
+        texZokkon.draw(240, 0);
+    }else if(bDokkyun){
+        texDokkyun.draw(240, 0);
+    }else if(bGameStart){
+        texGameStart.draw(240, 0);
+    }else if(bHajimaruyo){
+        texHajimaruyo.draw(240, 0);
+    }else if(bBakkyun){
+        texBakkyun.draw(240, 0);
+    }
+    ofDisableAlphaBlending();
+
+    
     //シンクロ率表示
     //ofSetColor(255);
     if(sizes.size() || sizes2.size()){
@@ -1060,12 +1171,21 @@ void ofApp::draw(){
         int happyounum;
         float histwidth;
         ofEnableAlphaBlending();
-        ofSetColor(255,255,255,230);
+        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+        ofSetColor(255,255,255,160);
         haikei[5].draw(240,0);
-        seiseki1.draw(100, 100, 200, 200);
-        seiseki2.draw(500, 500, 400, 400);
+        seiseki1.draw(1350, 600, 70, 70);//回
+        seiseki2.draw(300, 500, 430, 195);//
         ofSetLineWidth(25);
         if(countHappyou>30 && (scoreLog.size()>0)){
+            if(countHappyou==31){
+                mySnareSound.play();
+                timeline.stop();
+            }
+            if(countHappyou==151){
+                myClearSound.play();
+                mySnareSound.stop();
+            }
             happyounum=MIN((int)((countHappyou-30)),scoreLog.size()-1);
             histwidth = (900.0/scoreLog.size());
             //ofSetColor(255,255,255,128);
@@ -1078,18 +1198,18 @@ void ofApp::draw(){
                 ofSetColor((int)c.r,(int)c.g,(int)c.b,128);
                 ofLine((int)(280+i*histwidth),2000-19*scoreLog[i-1],(int)(280+(i+1)*histwidth),2000-19*scoreLog[i]);
             }
-            font.drawString(ofToString(scoreLog[happyounum]),ofGetWidth()-750,300);
+            font.drawString(ofToString(scoreLog[happyounum]),800,300);
             if(scoreLog[happyounum]==100){
-                font2.drawString("%",ofGetWidth()-300,300);
+                font2.drawString("%",1350,300);
             }else{
-                font2.drawString("%",ofGetWidth()-400,300);
+                font2.drawString("%",1350,300);
             }
             if(countHappyou-30 <= scoreLog.size()){
                 if(scoreLog[happyounum]==100){
                     count100p++;
                 }
             }
-            font.drawString(ofToString(count100p),ofGetWidth()/2-300,ofGetHeight()/2+200);
+            font.drawString(ofToString(count100p),800,750);
         }
         ofDisableAlphaBlending();
         
@@ -1347,6 +1467,11 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    for(int i=0;i<20;i++){
+        Firework f;
+        f.setup((int)ofRandom(7));
+        fs.push_back(f);
+    }
 }
 
 //--------------------------------------------------------------
