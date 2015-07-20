@@ -54,6 +54,8 @@ public:
     int sceneId = 0;//現在のシーンID
     int sceneId_1f = 0;//前フレームのシーンID
     bool bsceneChange = false;//シーンが変わったフラグ 前フレームとの比較で判断
+
+    int hitoTex = 0; //0:赤青、1:人参、2:無し
     
     ofImage img;
     bool bHideImage;
@@ -135,6 +137,8 @@ public:
     vector <ofVec3f> sizes;
     vector <ofVec3f> points2;//間違ってるやつ
     vector <ofVec3f> sizes2;
+    
+    
     //3D Object
     ObjRoad objRoad;
     ObjFrame objFrame;
@@ -156,6 +160,8 @@ public:
     ofTexture texture;
     ofTexture texture2;
     ofTexture texture3;
+    ofTexture texturehito;
+    ofTexture texturehito2;
     
     //カメラパラメータ
     int cameraCount;

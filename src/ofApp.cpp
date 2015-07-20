@@ -120,6 +120,8 @@ void ofApp::setup(){
     ofLoadImage(texture, "textures/dot.png");
     ofLoadImage(texture2, "textures/sensu.png");
     ofLoadImage(texture3, "textures/snow.png");
+    ofLoadImage(texturehito, "textures/hito_col.png");
+    ofLoadImage(texturehito2, "textures/hito_gl.png");
     
     //3D Object
     cameraId = 4;
@@ -424,7 +426,7 @@ void ofApp::update(){
 
     if(timeline.isPlaying()){
         //timer = timer *30;
-        //timer = timer *3;
+        timer = timer *3;
         //---------------------------------------------
         //    時間制御
         //---------------------------------------------
@@ -481,6 +483,7 @@ void ofApp::update(){
                 
             }
         }else if(timer < 70942){     //1B
+            sceneId = 15;
             bShowScore=false;
         }else if(timer < 101119){   //1サビ
             bShowScore = true;
@@ -511,6 +514,7 @@ void ofApp::update(){
             }
             
         }else if(timer < 139680){   //2B
+            sceneId = 31;
             bShowScore = false;
         }else if(timer < 169783){   //2番サビ
             bShowScore = true;
@@ -577,11 +581,13 @@ void ofApp::update(){
             switch (sceneId) {
                 case 1://説明画面中
                     cameraId = 1;
+                    hitoTex = 0;
                     bKetya = false;
                     currentHaikei=6;
                     countHaikei=1;
                     break;
                 case 12://ぐるぐる
+                    hitoTex = 1;
                     bKetya = false;
                     cameraId = 5;//ぐるぐるアングル
                     currentHaikei=1;
@@ -599,6 +605,10 @@ void ofApp::update(){
                     currentHaikei=1;
                     countHaikei=1;
                     break;
+                case 15://１B
+                    cameraId = 6;
+                    bKetya = false;
+                    break;
                 case 2://1サビ
                     bcameraRandom = true;
                     bKetya = false;
@@ -608,6 +618,13 @@ void ofApp::update(){
                 case 3://２番
                     bcameraRandom = false;
                     cameraId = 1;
+                    bKetya = false;
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 31://２B
+                    bcameraRandom = false;
+                    cameraId = 6;
                     bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;
@@ -626,12 +643,14 @@ void ofApp::update(){
                     countHaikei=1;
                     break;
                 case 42://ケチャ
+                    hitoTex = 2;
                     cameraId = 5;
                     bKetya = true;
                     currentHaikei=4;
                     countHaikei=1;
                     break;
                 case 5://ラスト
+                    hitoTex = 1;
                     bcameraRandom = true;
                     bKetya = false;
                     bRainbow = true;
@@ -874,22 +893,39 @@ void ofApp::draw3d(){
     
     //観客ノード
     glPointSize(10);
-    texture.bind();
-    ofSetColor(0, 100, 255);
+    switch (hitoTex) {
+        case 0:
+            texture.bind();
+            ofSetColor(0, 100, 255);
+            break;
+        case 1:
+            texturehito.bind();
+            ofSetColor(255, 255, 255);
+            break;
+        case 2:
+            break;
+        default:
+            break;
+    }
     int total = (int)points.size();
     if(total){
         vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
         vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
         vbo.draw(GL_POINTS, 0, (int)points.size());
     }
-    ofSetColor(255, 100, 90);
+    if(hitoTex==1){
+        texturehito.unbind();
+        texturehito2.bind();
+    }
+    if(hitoTex==0)ofSetColor(255, 100, 90);
     total = (int)points2.size();
     if(total){
         vbo.setVertexData(&points2[0], total, GL_STATIC_DRAW);
         vbo.setNormalData(&sizes2[0], total, GL_STATIC_DRAW);
         vbo.draw(GL_POINTS, 0,(int)points2.size());
     }
-    texture.unbind();
+    if(hitoTex==1)texturehito2.unbind();
+    if(hitoTex==0)texture.unbind();
     //ケチャ
     if(bKetya){
         /*for(int i = 0; i< points.size();i++){
@@ -1200,10 +1236,11 @@ void ofApp::draw(){
             syncScoreMovingNot++;
         }
     }
-    if(cameraCount%20==0){
+    if(cameraCount%30==0){
+    //if(cameraCount%1==0){
         syncScoreShow = syncScore;
         //syncScore = ((int)(sizes.size()*100/(sizes.size()+sizes2.size())) + syncScore*3)/4;
-        if(syncScoreShow > 98){
+        if(syncScoreShow > 99){
             syncScoreShow = 100;
         }
         if(!bfinish)scoreLog.push_back(syncScoreShow);//終わっていなければログに追加
@@ -1281,15 +1318,17 @@ void ofApp::draw(){
         ofFill();
         ofRect(0,0,ofGetWidth(),ofGetHeight());
         ofSetColor(255,255,255,255);
-        seiseki1.draw(1200, 600, 90, 90);//回
-        seiseki2.draw(300, 500, 430, 195);//
+        //seiseki1.draw(1200, 600, 90, 90);//回
+        //seiseki2.draw(300, 500, 430, 195);//100%なった回数のテキスト
+        seiseki1.draw(1200, 200, 90, 90);//回
+        seiseki2.draw(300, 100, 430, 195);//100%なった回数のテキスト
         ofSetLineWidth(25);
         if(countHappyou>30 && (scoreLog.size()>0)){
             if(countHappyou==31){
                 mySnareSound.play();
                 timeline.stop();
             }
-            if(countHappyou==181){
+            if(countHappyou==(scoreLog.size()+30)){
                 myClearSound.play();
                 mySnareSound.stop();
                 
@@ -1305,21 +1344,27 @@ void ofApp::draw(){
             //ofLine(20,700,820,700);
             //ofLine(40,100,40,720);
             ofColor c;
+            ofFill();
             for(int i =0;i<happyounum;i++){
-                if(i==0)continue;
+                //if(i==0)continue;
                 c.setHsb(255*i/scoreLog.size(), 255, 255);
                 ofSetColor((int)c.r,(int)c.g,(int)c.b,255);
-                ofLine((int)(280+i*histwidth),500-4*scoreLog[i-1],(int)(280+(i+1)*histwidth),500-4*scoreLog[i]);
+                ofRect((int)(280+i*histwidth), 900-4*scoreLog[i], histwidth,scoreLog[i]*4);
+                //ofLine((int)(280+i*histwidth),500-4*scoreLog[i-1],(int)(280+(i+1)*histwidth),500-4*scoreLog[i]);
             }
             if(happyounum!=(scoreLog.size()-1)){
-                font.drawString(ofToString(scoreLog[happyounum]),780,300);
-                font2.drawString("%",1150,300);
+                //font.drawString(ofToString(scoreLog[happyounum]),780,300);//フレームごとのスコアログ
+                font2.drawString(ofToString(scoreLog[happyounum]),780,700);//フレームごとのスコアログ
+                //font2.drawString("%",1150,300);
+                font2.drawString("%",1100,700);
             }if(countHappyou-30 <= scoreLog.size()){
                 if(scoreLog[happyounum]==100){
                     count100p++;
                 }
             }
-            font.drawString(ofToString(count100p),780,750);
+            //font.drawString(ofToString(count100p),780,750);//100％になった回数
+            ofSetColor(255,0,0,255);
+            font.drawString(ofToString(count100p),780,350);//100％になった回数
         }
         ofDisableAlphaBlending();
     }
