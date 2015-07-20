@@ -644,7 +644,7 @@ void ofApp::update(){
                     break;
                 case 42://ケチャ
                     hitoTex = 2;
-                    cameraId = 5;
+                    cameraId = 4;
                     bKetya = true;
                     currentHaikei=4;
                     countHaikei=1;
@@ -673,7 +673,7 @@ void ofApp::update(){
         }
         if(bcameraRandom){
             cameraRandom++;
-            if(cameraRandom%120==0){
+            if(cameraRandom%80==0){
                 cameraRandom=0;
                 cameraId = (int)ofRandom(1,10.9);
             }
@@ -772,7 +772,7 @@ void ofApp::draw3d(){
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 3:
-            camera.setPosition(0, 1500, 500);
+            camera.setPosition(0, -1500, 500);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 4:
@@ -792,7 +792,7 @@ void ofApp::draw3d(){
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 7:
-            camera.setPosition(-800, 800, 200);
+            camera.setPosition(-200, -800, 200);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 8:
