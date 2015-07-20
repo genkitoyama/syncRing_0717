@@ -468,6 +468,7 @@ void ofApp::update(){
                 
             }
         }else if(timer < 70942){     //1B
+            sceneId = 15;
             bShowScore=false;
         }else if(timer < 101119){   //1サビ
             bShowScore = true;
@@ -498,6 +499,7 @@ void ofApp::update(){
             }
             
         }else if(timer < 139680){   //2B
+            sceneId = 31;
             bShowScore = false;
         }else if(timer < 169783){   //2番サビ
             bShowScore = true;
@@ -587,6 +589,10 @@ void ofApp::update(){
                     currentHaikei=1;
                     countHaikei=1;
                     break;
+                case 15://１B
+                    cameraId = 6;
+                    bKetya = false;
+                    break;
                 case 2://1サビ
                     bcameraRandom = true;
                     bKetya = false;
@@ -596,6 +602,13 @@ void ofApp::update(){
                 case 3://２番
                     bcameraRandom = false;
                     cameraId = 1;
+                    bKetya = false;
+                    currentHaikei=1;
+                    countHaikei=1;
+                    break;
+                case 31://２B
+                    bcameraRandom = false;
+                    cameraId = 6;
                     bKetya = false;
                     currentHaikei=1;
                     countHaikei=1;

@@ -1,9 +1,11 @@
 <panel>
 	<missThr>100</missThr>
-	<3d_scale_x>25</3d_scale_x>
-	<3d_scale_y>25</3d_scale_y>
+	<3d_scale_x>29</3d_scale_x>
+	<3d_scale_y>29</3d_scale_y>
 	<3d_scale_z>1</3d_scale_z>
 	<size_scale>2</size_scale>
-	<size_offset>5</size_offset>
+	<size_offset>12</size_offset>
 	<Timeline_Draw_Method>0</Timeline_Draw_Method>
+	<SyncScore_speed_thr>3</SyncScore_speed_thr>
+	<SyncScore_Moving_Ratio_thr>20</SyncScore_Moving_Ratio_thr>
 </panel>
