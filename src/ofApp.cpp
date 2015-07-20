@@ -397,7 +397,7 @@ void ofApp::update(){
 //    }
     
     if(syncScoreShowFlag && (syncScoreShow==100)){
-        for(int i=0;i<20;i++){
+        for(int i=0;i<2;i++){
             Firework f;
             f.setup((int)ofRandom(7));
             fs.push_back(f);
@@ -676,6 +676,9 @@ void ofApp::update(){
             if(cameraRandom%80==0){
                 cameraRandom=0;
                 cameraId = (int)ofRandom(1,10.9);
+                if(cameraId == 6){
+                    cameraId = 7;
+                }
             }
         }
         
@@ -763,7 +766,7 @@ void ofApp::draw3d(){
     
     switch (cameraId) {
         case 1:
-            camera.setPosition(0, -1000, 400);
+            camera.setPosition(0, -1000, 200);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 2:
@@ -772,7 +775,7 @@ void ofApp::draw3d(){
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 3:
-            camera.setPosition(0, -1500, 500);
+            camera.setPosition(200, -800, 300);
             camera.lookAt(ofVec3f(0,0,0),ofVec3f(0,0,1));
             break;
         case 4:
