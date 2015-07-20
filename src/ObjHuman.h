@@ -151,6 +151,7 @@ public:
     int x,y,z;
     int visibleyrange;
     void draw(ofImage tex);
+    void drawYoko(ofImage tex);
     int texidi = 0;
     int texidj = 0;
 };

@@ -255,6 +255,22 @@ void ObjSimple::draw(ofImage tex){
     ofPopMatrix();
 }
 
+void ObjSimple::drawYoko(ofImage tex){
+    ofPushMatrix();
+    tex.bind();
+    ofSetColor(255);
+    ofPlanePrimitive ba;
+    ba.set(width,height);
+    ofTranslate(x,y,z);
+    //ofRotateX(-90);
+    ba.setPosition(0,0,0);
+    ba.setResolution(3,3);
+    ba.draw();
+    tex.unbind();
+    ofPopMatrix();
+}
+
+
 ObjRoad::ObjRoad(){
     offsetZ = -20;
     Ythr1 = 200;

@@ -6,8 +6,8 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     ofSetCircleResolution(32);
     
-    //ofSetWindowPosition(1921, 0);
-    //ofSetFullscreen(true);
+    ofSetWindowPosition(1921, 0);
+    ofSetFullscreen(true);
     
     img.loadImage("sora.jpg");
     
@@ -38,7 +38,6 @@ void ofApp::setup(){
     }
     currentHaikei = 0;
     
-    
     bHideImage = false;
     bBlack = false;
     bHideGui = false;
@@ -56,11 +55,11 @@ void ofApp::setup(){
     //objVelocity = 4.0655f;
     
     gui.setup("panel");
-    gui.add(missThr.set("missThr", 100,1,200));//失敗と判定する閾値
+    gui.add(missThr.set("missThr", 30,1,200));//失敗と判定する閾値
     gui.add(scalex.set("3d scale x", 29,1,80));
     gui.add(scaley.set("3d scale y", 29,1,80));
     gui.add(scalez.set("3d scale z", 1,1,80));
-    gui.add(humanscale.set("size scale", 2,1,10));
+    gui.add(humanscale.set("size scale", 4,1,10));
     gui.add(humansizeoffset.set("size offset", 5,1,256));
     gui.add(timelineMethod.set("Timeline Draw Method", 0,0,3));
     gui.add(scorespeedthr.set("SyncScore speed thr", 3,0,80));
@@ -169,12 +168,11 @@ void ofApp::setup(){
                 buf_x = ((commentxpos[i] - objFrameOffsetx)*scalex)>>5; //32等倍
                 buf_y = ((commentypos[j] - objFrameOffsety)*scaley)>>5; //32等倍
                 buf_z = (300 * scalez) >>5;//32等倍
-                objbuf2.setup(300, 300, buf_x, buf_y, buf_z);
+                objbuf2.setup(400, 400, buf_x, buf_y, buf_z);
                 objTexts.push_back(objbuf2);
             }
         }
     }
-    
     
     // load the shader
     
@@ -387,6 +385,14 @@ void ofApp::update(){
         billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
     }
     
+    if(syncScore==100){
+        for(int i=0;i<20;i++){
+            Firework f;
+            f.setup((int)ofRandom(7));
+            fs.push_back(f);
+        }
+    }
+    
     //テクスチャライブラリ
     if(texflag){
         ObjSimple objbuf;
@@ -433,7 +439,7 @@ void ofApp::update(){
                     bHajimaruyo = false;
                 }
             }
-            else if(timer < 31797){//止まってスタート
+            else if(timer < 29552){//止まってスタート
                 bGameStart = true;
                 sceneId = 13;
                 cameraId = 1;//ストップアングル
@@ -543,6 +549,7 @@ void ofApp::update(){
             bShowScore = false;
         }else if (timer < 224000){
             bShowScore = true;
+            bPausedSakura = true;
             sceneId = 5;
             texlibnum=2;            //ラスト
             objectPct=35;
@@ -880,7 +887,7 @@ void ofApp::draw3d(){
     ofDisablePointSprites();
     ofDisableBlendMode();
     ofDisableAlphaBlending();
-
+    
     
     //ライブハウスグリッド描画
     camera.begin();
@@ -1126,7 +1133,7 @@ void ofApp::draw(){
     if(bZukkyun){
         texZukkyun.draw(240, 0);
     }else if (bNainai){
-        texNainai.draw(240, 0);
+        texNainai.draw(240, 200);
     }else if(bKawaii){
         texKawaii.draw(240, 0);
     }else if(bZokkon){
@@ -1134,11 +1141,15 @@ void ofApp::draw(){
     }else if(bDokkyun){
         texDokkyun.draw(240, 0);
     }else if(bGameStart){
-        texGameStart.draw(ofGetWidth()/2, ofGetHeight()*3/4);
+        texGameStart.draw(ofGetWidth()/2-400, ofGetHeight()*3/5);
     }else if(bHajimaruyo){
         texHajimaruyo.draw(240, 0);
     }else if(bBakkyun){
         texBakkyun.draw(240, 0);
+    }else if(bYoiyoi){
+        texYoiyoi.draw(240,0);
+    }else if(bDodon){
+        texDodon.draw(240, 0);
     }
     ofDisableAlphaBlending();
 
@@ -1186,11 +1197,13 @@ void ofApp::draw(){
             c.setHsb(hue, 230, 230);
             ofSetColor(c);
         }
+        if(bShowScore&&timeline.isPlaying()){
         font.drawString(ofToString(syncScoreShow),ofGetWidth()/2-100,ofGetHeight()/2+150);
         if(syncScoreShow==100){
             font2.drawString("%",ofGetWidth()/2+350,ofGetHeight()/2+150);
         }else{
             font2.drawString("%",ofGetWidth()/2+250,ofGetHeight()/2+150);
+        }
         }
     }
     
@@ -1216,8 +1229,8 @@ void ofApp::draw(){
     ofRect(1680, 0, 240, 1080);
     
     ofSetColor(255);
-    if(!bHideGui) gui.draw();                                          //本番時は ! とる
-    if(!bHideInfo) ofDrawBitmapString(info, 20, ofGetHeight()-300);
+    if(bHideGui) gui.draw();                                          //本番時は ! とる
+    if(bHideInfo) ofDrawBitmapString(info, 20, ofGetHeight()-300);
     
     if(currentSlide < 4){                                              //スライド透過表示
         ofEnableAlphaBlending();
@@ -1248,12 +1261,7 @@ void ofApp::draw(){
                 myClearSound.play();
                 mySnareSound.stop();
                 
-                for(int i=0;i<20;i++){
-                    Firework f;
-                    f.setup((int)ofRandom(7));
-                    fs.push_back(f);
-                }
-                for(int i=0;i<20;i++){
+                for(int i=0;i<40;i++){
                     Firework f;
                     f.setup((int)ofRandom(7));
                     fs.push_back(f);
@@ -1344,12 +1352,14 @@ void ofApp::keyPressed(int key){
         //    texlibnum++;
         //}
         missThr++;
+        cout<<missThr<<endl;
     }
     else if(key == OF_KEY_DOWN){
         //if(texlibnum>0){
         //    texlibnum--;
         //}
         missThr--;
+        cout<<missThr<<endl;
     }
     else if(key == OF_KEY_RIGHT){       //左右でスライド切り替え
         currentSlide++;
