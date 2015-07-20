@@ -60,7 +60,7 @@ void ofApp::setup(){
     gui.add(scaley.set("3d scale y", 29,1,80));
     gui.add(scalez.set("3d scale z", 1,1,80));
     gui.add(humanscale.set("size scale", 4,1,10));
-    gui.add(humansizeoffset.set("size offset", 5,1,256));
+    gui.add(humansizeoffset.set("size offset", 14,1,256));
     gui.add(timelineMethod.set("Timeline Draw Method", 0,0,3));
     gui.add(scorespeedthr.set("SyncScore speed thr", 3,0,80));
     gui.add(scorespeedthr2.set("SyncScore Moving Ratio thr", 20,0,100));
@@ -396,7 +396,7 @@ void ofApp::update(){
 //        billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i],0,0));
 //    }
     
-    if(syncScore==100){
+    if(syncScoreShowFlag && (syncScoreShow==100)){
         for(int i=0;i<20;i++){
             Firework f;
             f.setup((int)ofRandom(7));
@@ -1224,7 +1224,7 @@ void ofApp::draw(){
     
     //シンクロ率表示
     //ofSetColor(255);
-    if(sizes.size() || sizes2.size()){
+    if((sizes.size() + sizes2.size()) > 20){
         syncScoreBuf = (int)(sizes.size()*100/(sizes.size()+sizes2.size()));
         syncScoreBuf+=scoreOffSet;//魔法のオフセット
         if(syncScoreBuf>100)syncScoreBuf=100;
