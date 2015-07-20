@@ -18,7 +18,7 @@ KetyaBillboard::KetyaBillboard(float x, float y){
 void KetyaBillboard::add(ofVec3f pos_){
     // パーティクルを追加
     count++;
-    if(true){
+    if(count%4==0){
         int j;
         billboardVels_kp.push_back(pos_);
         billboardVels_kc.push_back(pos_);
