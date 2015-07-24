@@ -6,8 +6,8 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     ofSetCircleResolution(32);
     
-    //ofSetWindowPosition(1921, 0);
-    //ofSetFullscreen(true);
+    ofSetWindowPosition(1921, 0);
+    ofSetFullscreen(true);
     
     img.loadImage("sora.jpg");
     
